@@ -2,8 +2,8 @@ import { WebhookPayloadPullRequest } from "@octokit/webhooks";
 import * as Octokit from "@octokit/rest";
 
 /**
- * If the PR comes from a core contributor, set themselves to be the assignee if
- * one isn't set during the creation of the PR.
+ * If the PR comes from a core contributor, set themselves to be the assignee 
+ * if one isn't set during the creation of the PR.
  */
 export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookPayloadPullRequest) => {
   const { repository: repo, pull_request } = payload;

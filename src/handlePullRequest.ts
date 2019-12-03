@@ -5,7 +5,6 @@ import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest"
 
 export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: Context) => {
   const api = createGitHubClient();
-
   // Run checks
   await assignSelfToNewPullRequest(api, payload);
 
