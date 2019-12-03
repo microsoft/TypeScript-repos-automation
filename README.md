@@ -1,3 +1,46 @@
+### Meta
+
+* __State:__ work in progress
+* __Dashboard:__ [Azure](https://portal.azure.com/#@72f988bf-86f1-41af-91ab-2d7cd011db47/resource/subscriptions/57bfeeed-c34a-4ffd-a06b-ccff27ac91b8/resourceGroups/typescriptreposautomatio/providers/Microsoft.Web/sites/TypeScriptReposAutomation)
+
+### Setup
+
+This repo represents a single Azure "Function App" - which is an app which hosts many functions. 
+
+```sh
+# Clone
+git clone https://github.com/microsoft/TypeScript-repos-automation.git repos-automation
+cd repos-automation
+npm install
+
+# Validate
+npm test
+```
+
+You can start the server by running
+
+```sh
+npm start
+```
+
+### Development
+
+This repo depends on you having the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local). 
+Expect this install to take some time.
+
+Windows users:
+
+```sh
+npm install -g azure-functions-core-tools
+```
+
+Mac users:
+
+```sh
+brew tap azure/functions
+brew install azure-functions-core-tools
+```
+
 
 # Contributing
 
