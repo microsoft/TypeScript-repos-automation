@@ -1,5 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import * as isValid from "is-valid-github-event"
+import verify = require('@octokit/webhooks/verify')
+import sign = require('@octokit/webhooks/sign')
 import { handleIssuePayload } from "../src/handleIssue";
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
@@ -8,9 +9,10 @@ import { handleIssuePayload } from "../src/handleIssue";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const isDev = process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development"
+    const secret = process.env.GITHUB_WEBHOOK_SECRET
     // For process.env.GITHUB_WEBHOOK_SECRET see
     // https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/57bfeeed-c34a-4ffd-a06b-ccff27ac91b8/resourceGroups/JSTSTeam-Storage/providers/Microsoft.KeyVault/vaults/jststeam-passwords/secrets
-    if (!isDev && !isValid(req, process.env.GITHUB_WEBHOOK_SECRET)) {
+    if (!isDev && !verify(secret, req.body, sign(secret, req.body))) {
         context.res = {
             status: 500,
             body: "This webhook did not come from GitHub"

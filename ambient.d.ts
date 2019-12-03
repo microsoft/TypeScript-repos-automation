@@ -1,1 +1,2 @@
-declare module "is-valid-github-event"
+declare module '@octokit/webhooks/verify'
+declare module '@octokit/webhooks/sign'
