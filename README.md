@@ -23,10 +23,7 @@ You should mostly work according to tests from the src repo, but you can start t
 npm start
 ```
 
-### Development
-
-This repo depends on you having the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local). 
-Expect this install to take some time.
+To do this you need to have the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) set up. Expect this install to take some time - it's the actual runtime used on the server's.
 
 Windows users:
 
@@ -40,7 +37,6 @@ Mac users:
 brew tap azure/functions
 brew install azure-functions-core-tools
 ```
-
 
 # Contributing
 
