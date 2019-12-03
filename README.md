@@ -17,7 +17,7 @@ npm install
 npm test
 ```
 
-You can start the server by running
+You should mostly work according to tests from the src repo, but you can start the server by running:
 
 ```sh
 npm start
