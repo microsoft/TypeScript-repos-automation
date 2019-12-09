@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import verify = require('@octokit/webhooks/verify')
 import sign = require('@octokit/webhooks/sign')
 
-import { handleIssuePayload } from "../src/handleIssue";
+import { handleIssuePayload } from "../src/typeScriptHandleIssue";
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
 // context and into the `src` directory, where work can be done against tests instead requiring changes to happen
