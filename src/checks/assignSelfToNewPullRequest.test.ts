@@ -17,13 +17,14 @@ describe(assignSelfToNewPullRequest, () => {
 
   it("Sets the assignee when they have write access ", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.repos.checkCollaborator.mockResolvedValue({ data: { permission: "write" } });
+    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
+    mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"));
 
-    expect(mockAPI.repos.checkCollaborator).toHaveBeenCalled();
+    expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
       assignees: ["ahejlsberg"],
       id: 35454,
@@ -35,13 +36,14 @@ describe(assignSelfToNewPullRequest, () => {
 
   it("Does not set the assignment when they have read access", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.repos.checkCollaborator.mockResolvedValue({ data: { permission: "read" } });
+    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
+    mockAPI.teams.getMembership.mockResolvedValue({ status: 400 });
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"));
 
-    expect(mockAPI.repos.checkCollaborator).toHaveBeenCalled();
+    expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
   });
 });

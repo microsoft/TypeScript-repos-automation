@@ -1,5 +1,6 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks";
 import * as Octokit from "@octokit/rest";
+import {isMemberOfTypeScriptTeam} from "../pr_meta/isMemberOfTeam"
 
 /**
  * If the PR comes from a core contributor, set themselves to be the assignee 
@@ -21,12 +22,11 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookP
   };
 
   // Check the access level of the user
-  const isCollaboratorTeamResponse = await api.repos.checkCollaborator({ ...thisIssue, username: author.login });
-  const accessToTypeScript = isCollaboratorTeamResponse.data.permission as string;
+  const isTeamMember = await isMemberOfTypeScriptTeam(author.login, api);
   const isTSBot = payload.sender.login === "typescript-bot";
 
   // This may be too lax, if so, it can be switched to checking a GitHub team
-  const isTSTeamMember = (accessToTypeScript === "admin" || accessToTypeScript === "write") && !isTSBot;
+  const isTSTeamMember = isTeamMember && !isTSBot;
   if (isTSTeamMember) {
     await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] });
   }
