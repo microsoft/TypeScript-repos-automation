@@ -1,4 +1,4 @@
-name: Linux_Node_Workflow_ScmCred
+name: Upload To Azure
 
 on:
   push:
