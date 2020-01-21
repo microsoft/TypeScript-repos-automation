@@ -1,5 +1,6 @@
 import { addLabelForTeamMember } from "./addLabelForTeamMember";
 import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient";
+import { getFakeLogger } from "../util/tests/createMockContext";
 
 describe(addLabelForTeamMember, () => {
   it("Adds the label when a team member writes a PR ", async () => {
@@ -8,7 +9,7 @@ describe(addLabelForTeamMember, () => {
     mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
 
     const api = convertToOctokitAPI(mockAPI);
-    await addLabelForTeamMember(api, getPRFixture("opened"));
+    await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
       issue_number: 348031538,
@@ -24,7 +25,7 @@ describe(addLabelForTeamMember, () => {
     mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
     mockAPI.issues.addAssignees.mockResolvedValue({});
     const api = convertToOctokitAPI(mockAPI);
-    await addLabelForTeamMember(api, getPRFixture("opened"));
+    await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
     expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
   });
