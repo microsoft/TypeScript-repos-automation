@@ -23,7 +23,7 @@ You should mostly work according to tests from the src repo, but you can start t
 npm start
 ```
 
-To do this you need to have the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) set up. Expect this install to take some time - it's the actual runtime used on the server's.
+To do this you need to have the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) set up. Expect this install to take some time - it's the actual runtime used on the server in Azure.
 
 Windows users:
 
