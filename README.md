@@ -1,3 +1,68 @@
+### Meta
+
+* __State:__ work in progress
+* __Dashboard:__ [Azure](https://portal.azure.com/#@72f988bf-86f1-41af-91ab-2d7cd011db47/resource/subscriptions/57bfeeed-c34a-4ffd-a06b-ccff27ac91b8/resourceGroups/typescriptreposautomatio/providers/Microsoft.Web/sites/TypeScriptReposAutomation)
+
+### Setup
+
+This repo represents a single Azure "Function App" - which is an app which hosts many functions. 
+
+```sh
+# Clone
+git clone https://github.com/microsoft/TypeScript-repos-automation.git repos-automation
+cd repos-automation
+npm install
+
+# Validate
+npm test
+```
+
+You should mostly work according to tests from the src repo, but you can start the server by running:
+
+```sh
+npm start
+```
+
+To do this you need to have the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) set up. Expect this install to take some time - it's the actual runtime used on the server's.
+
+Windows users:
+
+```sh
+npm install -g azure-functions-core-tools
+```
+
+Mac users:
+
+```sh
+brew tap azure/functions
+brew install azure-functions-core-tools
+```
+
+Then you can use curl to send GitHub webhook JSON fixtures to the server:
+
+```sh
+curl -d "@fixtures/issues/created.json" -X POST http://localhost:7071/api/TypeScriptRepoIssueWebhook
+```
+
+While developing, you can use the `createFakeGitHubClient` to mock out the API with the responses you expect:
+
+```diff
+- import { createGitHubClient } from "./util/createGitHubClient";
++ import { createFakeGitHubClient } from "./util/tests/createMockGitHubClient";
+
+export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: Context) => {
+-  const api = createGitHubClient();
++  const api = createGitHubClient();
+
+  // Run checks
+  await assignSelfToNewPullRequest(api, payload);
+
+  context.res = {
+    status: 200,
+    body: "Success"
+  };
+};
+```
 
 # Contributing
 
