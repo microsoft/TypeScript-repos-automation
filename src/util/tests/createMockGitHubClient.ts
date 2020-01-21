@@ -26,10 +26,15 @@ export const createMockGitHubClient = () => {
       getContents: jest.fn()
     },
     issues: {
-      addAssignees: jest.fn()
+      addAssignees: jest.fn(),
+      addLabels: jest.fn()
     },
     pulls: {
       get: jest.fn()
+    },
+    teams: {
+      getByName: jest.fn(),
+      getMembership: jest.fn()
     }
   };
 };
@@ -54,10 +59,15 @@ export const createFakeGitHubClient = () => {
       getContents: Promise.resolve({})
     },
     issues: {
-      addAssignees: Promise.resolve({})
+      addAssignees: Promise.resolve({}),
+      addLabels: Promise.resolve({})
     },
     pulls: {
       get: Promise.resolve({})
+    },
+    teams: {
+      getByName: Promise.resolve({ }),
+      getMembership: Promise.resolve({ status: 200 })
     }
   };
 

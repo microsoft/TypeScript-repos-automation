@@ -6,7 +6,7 @@ import { getCodeOwners, findMatchingOwners } from "./getCodeOwners";
 type PullRequest = import("@octokit/rest").PullsGetResponse;
 
 /** The context around which you can make decisions  */
-export interface DTPRContext {
+export interface PRFilesContext {
   diffString: string;
   diff: ReturnType<typeof parseDiff>;
   files: {
@@ -22,11 +22,11 @@ export interface DTPRContext {
   }>;
 }
 
-export const getDTPRContext = async (
+export const getPRFileContext = async (
   api: Octokit,
   prNumber: number,
   context: Context
-): Promise<DTPRContext | undefined> => {
+): Promise<PRFilesContext | undefined> => {
   const thisPR = { owner: "DefinitelyTyped", repo: "DefinitelyTyped", pull_number: prNumber };
   const diffHeaders = { accept: "application/vnd.github.v3.diff" };
 
@@ -62,7 +62,7 @@ export const getDTPRContext = async (
 
   const allCodeOwners = await getCodeOwners(api);
 
-  const touchedModules: DTPRContext["touchedModules"] = Array.from(projectNames).map(name => {
+  const touchedModules: PRFilesContext["touchedModules"] = Array.from(projectNames).map(name => {
     return {
       name: name,
       files: filesInTypeModules.filter(p => p.startsWith(`types/${name}`)),

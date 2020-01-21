@@ -1,4 +1,4 @@
-import { DTPRContext, getDTPRContext } from "../../pr_meta/getDTPRContext";
+import { PRFilesContext, getPRFileContext } from "../../pr_meta/getPRFileContext";
 import { Context } from "@azure/functions";
 import { createMockGitHubClient, getPRFixture, convertToOctokitAPI } from "./createMockGitHubClient";
 import { createMockContext } from "./createMockContext";
@@ -23,7 +23,7 @@ import { createMockContext } from "./createMockContext";
  *   const api = convertToOctokitAPI(mockAPI);
  *   const dtContext = await createMockDTContext(api, context, {})
  */
-export const createMockDTContext = async (api: import("@octokit/rest"), context: Context, overrides: Partial<DTPRContext>) => {
+export const createMockPRFileContext = async (api: import("@octokit/rest"), context: Context, overrides: Partial<PRFilesContext>) => {
   const defaultCodeowners = `
 /types/lambda-tester/                                   @ivank @HajoAhoMantila @msuntharesan
 /types/langmap/                                         @grabofus
@@ -42,7 +42,7 @@ export const createMockDTContext = async (api: import("@octokit/rest"), context:
     
     // @ts-ignore
     api.repos.getContents.mockResolvedValueOnce({ data: { content: base64data} })
-  const dtContext = await getDTPRContext(api, 9999, context);
+  const dtContext = await getPRFileContext(api, 9999, context);
   if (!dtContext) throw new Error("Did not create a DT context")
 
   return { ...dtContext, ...overrides}
@@ -52,7 +52,7 @@ export const createMockDTContext = async (api: import("@octokit/rest"), context:
  * A default set of contextual objects for writing tests against. You can use the
  * partial object to override any results from the default setup
  */
-export const createDefaultMockDTContext = async (overrides: Partial<DTPRContext>, options?: { diff?: string, prFixture?: string}) => {
+export const createDefaultMockPRFileContext = async (overrides: Partial<PRFilesContext>, options?: { diff?: string, prFixture?: string}) => {
   const context = createMockContext()
   const mockAPI = createMockGitHubClient();
   // The diff
@@ -62,7 +62,7 @@ export const createDefaultMockDTContext = async (overrides: Partial<DTPRContext>
   mockAPI.pulls.get.mockResolvedValueOnce(pr)
 
   const api = convertToOctokitAPI(mockAPI);
-  const dt = await createMockDTContext(api, context, overrides)
+  const dt = await createMockPRFileContext(api, context, overrides)
 
   return {
     api,

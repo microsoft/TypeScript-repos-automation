@@ -64,6 +64,11 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
 };
 ```
 
+# Deployment
+
+PR's are automatically deployed when merged via GitHub Actions. 
+If you'd like to manually deploy, you can use `npm run deploy`. Note: a manual deploy will nuke your `node_modules`.
+ 
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
