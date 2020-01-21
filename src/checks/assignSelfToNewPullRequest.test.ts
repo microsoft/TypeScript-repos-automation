@@ -1,5 +1,6 @@
 import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest";
 import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient";
+import { getFakeLogger } from "../util/tests/createMockContext";
 
 describe(assignSelfToNewPullRequest, () => {
   it("NO-OPs when there's assignees already ", async () => {
@@ -8,7 +9,7 @@ describe(assignSelfToNewPullRequest, () => {
     pr.pull_request.assignees = ["orta"]
 
     const api = convertToOctokitAPI(mockAPI);
-    await assignSelfToNewPullRequest(api, pr);
+    await assignSelfToNewPullRequest(api, pr, getFakeLogger());
 
     expect(mockAPI.repos.checkCollaborator).not.toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalledWith();
@@ -22,7 +23,7 @@ describe(assignSelfToNewPullRequest, () => {
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
-    await assignSelfToNewPullRequest(api, getPRFixture("opened"));
+    await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
@@ -41,7 +42,7 @@ describe(assignSelfToNewPullRequest, () => {
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
-    await assignSelfToNewPullRequest(api, getPRFixture("opened"));
+    await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
