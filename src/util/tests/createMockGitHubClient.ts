@@ -22,10 +22,19 @@ import { WebhookPayloadPullRequest, WebhookPayloadIssues } from "@octokit/webhoo
 export const createMockGitHubClient = () => {
   return {
     repos: {
-      checkCollaborator: jest.fn()
+      checkCollaborator: jest.fn(),
+      getContents: jest.fn()
     },
     issues: {
-      addAssignees: jest.fn()
+      addAssignees: jest.fn(),
+      addLabels: jest.fn()
+    },
+    pulls: {
+      get: jest.fn()
+    },
+    teams: {
+      getByName: jest.fn(),
+      getMembership: jest.fn()
     }
   };
 };
@@ -46,10 +55,19 @@ type PromisifiedInferredJestObj = JestMockToPromise<ReturnType<typeof createMock
 export const createFakeGitHubClient = () => {
   const fake: PromisifiedInferredJestObj = {
     repos: {
-      checkCollaborator: Promise.resolve({})
+      checkCollaborator: Promise.resolve({}),
+      getContents: Promise.resolve({})
     },
     issues: {
-      addAssignees: Promise.resolve({})
+      addAssignees: Promise.resolve({}),
+      addLabels: Promise.resolve({})
+    },
+    pulls: {
+      get: Promise.resolve({})
+    },
+    teams: {
+      getByName: Promise.resolve({ }),
+      getMembership: Promise.resolve({ status: 200 })
     }
   };
 
