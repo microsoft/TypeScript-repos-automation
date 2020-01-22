@@ -16,7 +16,7 @@ describe(addLabelForTeamMember, () => {
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
-      issue_number: 348031538,
+      issue_number: 35454,
       labels: ["Author: Team"],
       owner: "microsoft",
       repo: "TypeScript"

@@ -3,9 +3,7 @@ import type { Logger } from "@azure/functions";
 let cachedTSTeam: string [] = []
 
 /** Checks if someone is a member of a team, and always bails with TS bot */
-export const isMemberOfTSTeam = async (username: string, api: Octokit, log: Logger) => {
-  log.info("Found: ", cachedTSTeam.join(", "))
-
+export const isMemberOfTSTeam = async (username: string, api: Octokit, _log: Logger) => {
   if (username === "typescript-bot") return false;
   // Keep a cache so that it's only grabbed every so often
   if (cachedTSTeam.length) {
@@ -13,7 +11,6 @@ export const isMemberOfTSTeam = async (username: string, api: Octokit, log: Logg
   }
 
   const contentResponse = await api.repos.getContents({ path: ".github/pr_owners.txt", repo: "TypeScript", owner: "Microsoft" })
-  log.info(contentResponse)
   
   // @ts-ignore types are mismatched
   const usersText = Buffer.from(contentResponse.data.content, 'base64').toString()

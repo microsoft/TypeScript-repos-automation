@@ -16,6 +16,6 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   }
 
   // Add the label
-  await api.issues.addLabels({ labels: ["Author: Team"], repo: repo.name, owner: repo.owner.login, issue_number: pull_request.id });
+  await api.issues.addLabels({ labels: ["Author: Team"], repo: repo.name, owner: repo.owner.login, issue_number:payload.number });
   logger.info("Added labels to PR")
 };
