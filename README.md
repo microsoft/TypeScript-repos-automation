@@ -1,9 +1,20 @@
-### Meta
+## Meta
 
-* __State:__ work in progress
+* __State:__ In Production
 * __Dashboard:__ [Azure](https://portal.azure.com/#@72f988bf-86f1-41af-91ab-2d7cd011db47/resource/subscriptions/57bfeeed-c34a-4ffd-a06b-ccff27ac91b8/resourceGroups/typescriptreposautomatio/providers/Microsoft.Web/sites/TypeScriptReposAutomation)
 
-### Setup
+## Current Checks
+
+#### Pull Requests
+
+- Adds a label for any new PR by a core team member
+- Assigns a core team member to their own PR if no-one is assigned
+
+#### Issues
+
+- NOOP for now, but set up
+
+## Setup
 
 This repo represents a single Azure "Function App" - which is an app which hosts many functions. 
 
