@@ -4,13 +4,15 @@ import { createGitHubClient } from "./util/createGitHubClient";
 import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest";
 import { addLabelForTeamMember } from "./checks/addLabelForTeamMember";
 import Octokit = require("@octokit/rest");
-
+import {sha} from "./sha"
 
 
 export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: Context) => {
   const api = createGitHubClient();
+  const ran = [] as string[]
   const run = (name: string, fn: (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => Promise<void>) => {
-    context.log(`\n\n## ${name}\n`)
+    context.log.info(`\n\n## ${name}\n`)
+    ran.push(name)
     return fn(api, payload, context.log)
   }
   
@@ -20,6 +22,7 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
 
   context.res = {
     status: 200,
-    body: "Success"
+    headers: { sha: sha },
+    body: `Success, ran: ${ran.join(", ")}`
   };
 };

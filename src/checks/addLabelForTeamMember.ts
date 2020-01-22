@@ -12,10 +12,10 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   // Check the access level of the user
   const isTeamMember = await isMemberOfTypeScriptTeam(pull_request.user.login, api);
   if (!isTeamMember) {
-    return logger(`Skipping because ${pull_request.user.login} is not a member of the TS team`)
+    return logger.info(`Skipping because ${pull_request.user.login} is not a member of the TS team`)
   }
 
   // Add the label
   await api.issues.addLabels({ labels: ["Author: Team"], repo: repo.name, owner: repo.owner.login, issue_number: pull_request.id });
-  logger("Added labels to PR")
+  logger.info("Added labels to PR")
 };

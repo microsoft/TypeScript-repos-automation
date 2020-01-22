@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "build": "tsc",
+    "postinstall": "node scripts/printSHA.js",
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",

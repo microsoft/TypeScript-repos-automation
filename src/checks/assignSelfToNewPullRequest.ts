@@ -10,7 +10,7 @@ import { Logger } from "@azure/functions";
 export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
   const { repository: repo, pull_request } = payload;
   if (pull_request.assignees.length > 0) {
-    return logger("Skipping because there are assignees already")
+    return logger.info("Skipping because there are assignees already")
   }
 
   const author = pull_request.user;
@@ -25,10 +25,10 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookP
   // Check the access level of the user
   const isTeamMember = await isMemberOfTypeScriptTeam(author.login, api);
   if (isTeamMember) {
-    logger(`Adding ${author.login} as the assignee`)
+    logger.info(`Adding ${author.login} as the assignee`)
     await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] });
   } else {
-    logger(`Skipping because they are not a TS team member`)
+    logger.info(`Skipping because they are not a TS team member`)
 
   }
 };
