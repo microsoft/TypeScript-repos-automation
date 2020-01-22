@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import verify = require('@octokit/webhooks/verify')
 import sign = require('@octokit/webhooks/sign')
 
-import { handleIssuePayload } from "../src/typeScriptHandleIssue";
+import { handlePullRequestPayload } from "../src/typeScriptHandlePullRequest";
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
 // context and into the `src` directory, where work can be done against tests instead requiring changes to happen
@@ -22,7 +22,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         return;
     }
 
-    await handleIssuePayload(req.body, context)
+    await handlePullRequestPayload(req.body, context)
 };
 
 export default httpTrigger;
