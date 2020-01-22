@@ -17,7 +17,7 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
     return fn(api, payload, context.log)
   }
   
-  context.log.info("payload", Object.keys(payload))
+  context.log.info("payload", payload)
 
     // Run checks
   await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest)
