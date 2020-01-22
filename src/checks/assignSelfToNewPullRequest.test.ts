@@ -38,7 +38,7 @@ describe(assignSelfToNewPullRequest, () => {
   it("Does not set the assignment when they have read access", async () => {
     const mockAPI = createMockGitHubClient();
     mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
-    mockAPI.teams.getMembership.mockResolvedValue({ status: 400 });
+    mockAPI.teams.getMembership.mockRejectedValue(new Error(""));
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);

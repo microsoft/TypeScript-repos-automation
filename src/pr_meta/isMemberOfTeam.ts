@@ -10,6 +10,10 @@ export const isMemberOfTeam = async (username: string, org:string, team_slug: st
   const teamResponse = await api.teams.getByName({ org, team_slug })
   const team_id = teamResponse.data.id
 
-  const isMemberResponse = await api.teams.getMembership({ team_id, username})
-  return isMemberResponse.status === 200 
+  try {
+    await api.teams.getMembership({ team_id, username})
+    return true
+  } catch (error) {
+    return false
+  }
 }
