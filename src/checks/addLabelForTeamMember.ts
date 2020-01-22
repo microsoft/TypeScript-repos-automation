@@ -10,7 +10,7 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   const { repository: repo, pull_request } = payload;
 
   // Check the access level of the user
-  const isTeamMember = await isMemberOfTSTeam(pull_request.user.login, api);
+  const isTeamMember = await isMemberOfTSTeam(pull_request.user.login, api, logger);
   if (!isTeamMember) {
     return logger.info(`Skipping because ${pull_request.user.login} is not a member of the TS team`)
   }

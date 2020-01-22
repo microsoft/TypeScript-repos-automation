@@ -23,7 +23,7 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookP
   };
 
   // Check the access level of the user
-  const isTeamMember = await isMemberOfTSTeam(author.login, api);
+  const isTeamMember = await isMemberOfTSTeam(author.login, api, logger);
   if (isTeamMember) {
     logger.info(`Adding ${author.login} as the assignee`)
     await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] });
