@@ -21,11 +21,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         };
         return;
     }
-    
-    context.log.info("body", req.body)
-    context.log.info("req", req)
 
-    await handlePullRequestPayload(JSON.parse(req.body), context)
+    await handlePullRequestPayload(req.body, context)
 };
 
 export default httpTrigger;

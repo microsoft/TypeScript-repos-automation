@@ -20,7 +20,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         return;
     }
 
-    await handleIssuePayload(JSON.parse(req.body), context)
+    await handleIssuePayload(req.body, context)
 };
 
 export default httpTrigger;
