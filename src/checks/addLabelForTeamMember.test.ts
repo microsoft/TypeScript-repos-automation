@@ -1,12 +1,16 @@
+jest.mock("../pr_meta/isMemberOfTSTeam")
+
 import { addLabelForTeamMember } from "./addLabelForTeamMember";
 import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient";
 import { getFakeLogger } from "../util/tests/createMockContext";
 
+import {isMemberOfTSTeam} from "../pr_meta/isMemberOfTSTeam"
+const mockIsMember = isMemberOfTSTeam as any as jest.Mock
+
 describe(addLabelForTeamMember, () => {
   it("Adds the label when a team member writes a PR ", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
-    mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
+    mockIsMember.mockResolvedValue(true)
 
     const api = convertToOctokitAPI(mockAPI);
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
@@ -19,14 +23,14 @@ describe(addLabelForTeamMember, () => {
     });
   });
 
-  it("Does not set the assignment when they have read access", async () => {
+  it("Does not set the assignment when they are not a team member", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
-    mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
+    mockIsMember.mockResolvedValue(false)
     mockAPI.issues.addAssignees.mockResolvedValue({});
+    
     const api = convertToOctokitAPI(mockAPI);
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
-    expect(mockAPI.teams.getMembership).toHaveBeenCalled();
+
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
   });
 });

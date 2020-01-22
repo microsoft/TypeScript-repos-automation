@@ -1,6 +1,6 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks";
 import * as Octokit from "@octokit/rest";
-import {isMemberOfTypeScriptTeam} from "../pr_meta/isMemberOfTeam"
+import {isMemberOfTSTeam} from "../pr_meta/isMemberOfTSTeam"
 import { Logger } from "@azure/functions";
 
 /**
@@ -23,7 +23,7 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookP
   };
 
   // Check the access level of the user
-  const isTeamMember = await isMemberOfTypeScriptTeam(author.login, api);
+  const isTeamMember = await isMemberOfTSTeam(author.login, api);
   if (isTeamMember) {
     logger.info(`Adding ${author.login} as the assignee`)
     await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] });

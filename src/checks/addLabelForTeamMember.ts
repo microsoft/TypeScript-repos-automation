@@ -1,6 +1,6 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks";
 import * as Octokit from "@octokit/rest";
-import { isMemberOfTypeScriptTeam } from "../pr_meta/isMemberOfTeam";
+import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam";
 import type { Logger } from "@azure/functions";
 
 /**
@@ -10,7 +10,7 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   const { repository: repo, pull_request } = payload;
 
   // Check the access level of the user
-  const isTeamMember = await isMemberOfTypeScriptTeam(pull_request.user.login, api);
+  const isTeamMember = await isMemberOfTSTeam(pull_request.user.login, api);
   if (!isTeamMember) {
     return logger.info(`Skipping because ${pull_request.user.login} is not a member of the TS team`)
   }

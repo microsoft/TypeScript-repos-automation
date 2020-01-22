@@ -1,6 +1,11 @@
+jest.mock("../pr_meta/isMemberOfTSTeam")
+
 import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest";
 import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient";
 import { getFakeLogger } from "../util/tests/createMockContext";
+
+import {isMemberOfTSTeam} from "../pr_meta/isMemberOfTSTeam"
+const mockIsMember = isMemberOfTSTeam as any as jest.Mock
 
 describe(assignSelfToNewPullRequest, () => {
   it("NO-OPs when there's assignees already ", async () => {
@@ -15,17 +20,14 @@ describe(assignSelfToNewPullRequest, () => {
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalledWith();
   });
 
-
   it("Sets the assignee when they have write access ", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
-    mockAPI.teams.getMembership.mockResolvedValue({ status: 200 });
+    mockIsMember.mockResolvedValue(true)
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
-    expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
       assignees: ["ahejlsberg"],
       id: 35454,
@@ -37,14 +39,12 @@ describe(assignSelfToNewPullRequest, () => {
 
   it("Does not set the assignment when they have read access", async () => {
     const mockAPI = createMockGitHubClient();
-    mockAPI.teams.getByName.mockResolvedValue({ data: { id: 123456 } });
-    mockAPI.teams.getMembership.mockRejectedValue(new Error(""));
+    mockIsMember.mockResolvedValue(false)
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
     const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
-    expect(mockAPI.teams.getMembership).toHaveBeenCalled();
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
   });
 });
