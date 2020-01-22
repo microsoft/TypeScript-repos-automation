@@ -60,3 +60,6 @@ typings/
 # next.js build output
 .next
 dist
+
+# to ignore the changes in the future
+src/sha.ts
