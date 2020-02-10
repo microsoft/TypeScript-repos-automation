@@ -4,6 +4,7 @@ import sign = require("@octokit/webhooks/sign");
 
 import { handlePullRequestPayload } from "../src/typeScriptHandlePullRequest";
 import { anyRepoHandleStatusUpdate } from "../src/anyRepoHandleStatusUpdate";
+import { anyRepoHandleIssueCommentPayload } from "../src/anyRepoHandleIssueComment";
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
 // context and into the `src` directory, where work can be done against tests instead requiring changes to happen
@@ -37,7 +38,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
       break;
 
     case "issue_comment":
-      // NOOP for now
+      await anyRepoHandleIssueCommentPayload(req.body, context)
       break;
   }
 

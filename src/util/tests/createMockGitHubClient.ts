@@ -33,7 +33,12 @@ export const createMockGitHubClient = () => {
     },
     pulls: {
       get: jest.fn(),
-      merge: jest.fn()
+      merge: jest.fn(),
+      listFiles: {
+        endpoint: {
+          merge: jest.fn()
+        } 
+      }
     },
     teams: {
       getByName: jest.fn(),
@@ -41,7 +46,8 @@ export const createMockGitHubClient = () => {
     },
     search: {
       issues: jest.fn()
-    }
+    },
+    paginate: jest.fn()
   };
 
   return {
@@ -77,7 +83,8 @@ export const createFakeGitHubClient = () => {
     },
     pulls: {
       get: Promise.resolve({}),
-      merge: Promise.resolve({})
+      merge: Promise.resolve({}),
+      listFiles: Promise.resolve({})
     },
     teams: {
       getByName: Promise.resolve({ }),
@@ -85,7 +92,8 @@ export const createFakeGitHubClient = () => {
     },
     search: {
       issues: Promise.resolve({})
-    }
+    },
+    paginate: Promise.resolve({}) as any
   };
 
   return (fake as unknown) as Octokit;
@@ -102,7 +110,8 @@ export const convertToOctokitAPI = (mock: {}) => {
 };
 
 /** Grabs a known PR fixture */
-export const getPRFixture = (fixture: "closed" | "opened"): WebhookPayloadPullRequest =>
+export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed", 
+): WebhookPayloadPullRequest =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"));
 
 /** Grabs a known issue fixture */
