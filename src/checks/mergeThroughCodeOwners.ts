@@ -4,7 +4,7 @@ import { Logger } from "@azure/functions";
 import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR";
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel";
 
-export const mergePhrase = "OK, merge"
+export const mergePhrase = "Ready to merge"
 
 /**
  * Allow someone to declare a PR should be merged if they have access rights via code owners
