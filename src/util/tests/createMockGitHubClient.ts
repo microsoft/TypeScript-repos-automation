@@ -20,22 +20,33 @@ import { WebhookPayloadPullRequest, WebhookPayloadIssues } from "@octokit/webhoo
  *   const api = convertToOctokitAPI(mockAPI)
  */
 export const createMockGitHubClient = () => {
-  return {
+  const mockAPI = {
     repos: {
       checkCollaborator: jest.fn(),
-      getContents: jest.fn()
+      getContents: jest.fn(),
+      getCombinedStatusForRef: jest.fn()
     },
     issues: {
       addAssignees: jest.fn(),
-      addLabels: jest.fn()
+      addLabels: jest.fn(),
+      get: jest.fn()
     },
     pulls: {
-      get: jest.fn()
+      get: jest.fn(),
+      merge: jest.fn()
     },
     teams: {
       getByName: jest.fn(),
       getMembership: jest.fn()
+    },
+    search: {
+      issues: jest.fn()
     }
+  };
+
+  return {
+    mockAPI,
+    api: convertToOctokitAPI(mockAPI)
   };
 };
 
@@ -47,7 +58,7 @@ type JestMockToPromise<Type> = {
 };
 
 // Hardcoding mapped types like this makes it easy to see the results in the hover
-type PromisifiedInferredJestObj = JestMockToPromise<ReturnType<typeof createMockGitHubClient>>;
+type PromisifiedInferredJestObj = JestMockToPromise<ReturnType<typeof createMockGitHubClient>["mockAPI"]>;
 
 /**
  * A Fake GitHub client which lets you work with fake responses while working in development
@@ -56,18 +67,24 @@ export const createFakeGitHubClient = () => {
   const fake: PromisifiedInferredJestObj = {
     repos: {
       checkCollaborator: Promise.resolve({}),
-      getContents: Promise.resolve({})
+      getContents: Promise.resolve({}),
+      getCombinedStatusForRef: Promise.resolve({}),
     },
     issues: {
       addAssignees: Promise.resolve({}),
-      addLabels: Promise.resolve({})
+      addLabels: Promise.resolve({}),
+      get: Promise.resolve({})
     },
     pulls: {
-      get: Promise.resolve({})
+      get: Promise.resolve({}),
+      merge: Promise.resolve({})
     },
     teams: {
       getByName: Promise.resolve({ }),
       getMembership: Promise.resolve({ status: 200 })
+    },
+    search: {
+      issues: Promise.resolve({})
     }
   };
 

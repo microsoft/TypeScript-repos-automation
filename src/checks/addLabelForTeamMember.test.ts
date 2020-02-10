@@ -9,10 +9,9 @@ const mockIsMember = isMemberOfTSTeam as any as jest.Mock
 
 describe(addLabelForTeamMember, () => {
   it("Adds the label when a team member writes a PR ", async () => {
-    const mockAPI = createMockGitHubClient();
+    const {mockAPI, api} = createMockGitHubClient();
     mockIsMember.mockResolvedValue(true)
 
-    const api = convertToOctokitAPI(mockAPI);
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
@@ -24,11 +23,10 @@ describe(addLabelForTeamMember, () => {
   });
 
   it("Does not set the assignment when they are not a team member", async () => {
-    const mockAPI = createMockGitHubClient();
+    const {mockAPI, api} = createMockGitHubClient();
     mockIsMember.mockResolvedValue(false)
     mockAPI.issues.addAssignees.mockResolvedValue({});
     
-    const api = convertToOctokitAPI(mockAPI);
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
