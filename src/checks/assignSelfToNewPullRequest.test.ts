@@ -9,11 +9,10 @@ const mockIsMember = isMemberOfTSTeam as any as jest.Mock
 
 describe(assignSelfToNewPullRequest, () => {
   it("NO-OPs when there's assignees already ", async () => {
-    const mockAPI = createMockGitHubClient();
+    const {mockAPI, api} = createMockGitHubClient();
     const pr = getPRFixture("opened")
     pr.pull_request.assignees = ["orta"]
 
-    const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, pr, getFakeLogger());
 
     expect(mockAPI.repos.checkCollaborator).not.toHaveBeenCalled();
@@ -21,11 +20,10 @@ describe(assignSelfToNewPullRequest, () => {
   });
 
   it("Sets the assignee when they have write access ", async () => {
-    const mockAPI = createMockGitHubClient();
+    const {mockAPI, api} = createMockGitHubClient();
     mockIsMember.mockResolvedValue(true)
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
-    const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
@@ -38,11 +36,10 @@ describe(assignSelfToNewPullRequest, () => {
   });
 
   it("Does not set the assignment when they have read access", async () => {
-    const mockAPI = createMockGitHubClient();
+    const { mockAPI, api}  = createMockGitHubClient();
     mockIsMember.mockResolvedValue(false)
     mockAPI.issues.addAssignees.mockResolvedValue({});
 
-    const api = convertToOctokitAPI(mockAPI);
     await assignSelfToNewPullRequest(api, getPRFixture("opened"), getFakeLogger());
 
     expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled();
