@@ -54,7 +54,7 @@ export const createMockPRFileContext = async (api: import("@octokit/rest"), cont
  */
 export const createDefaultMockPRFileContext = async (overrides: Partial<PRFilesContext>, options?: { diff?: string, prFixture?: string}) => {
   const context = createMockContext()
-  const mockAPI = createMockGitHubClient();
+  const {mockAPI} = createMockGitHubClient();
   // The diff
   mockAPI.pulls.get.mockResolvedValueOnce({ data: options?.diff ?? '' })
   // The PR
