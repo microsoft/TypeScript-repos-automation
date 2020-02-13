@@ -60,4 +60,28 @@ describe("for handling merging when green", () => {
 
     expect(logger.info).toBeCalledWith("Accepting as reasonable to merge");
   });
+
+
+  it("handles a complex regex and owner group in an pr", async () => {
+    const { api, mockAPI } = createMockGitHubClient();
+    const logger = getFakeLogger();
+    const pr = getPRFixture("api-pr-closed")
+    // @ts-ignore
+    getContents.mockReturnValue(`
+/packages/playground-examples/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+/packages/tsconfig-reference/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+/packages/typescriptlang-org/src/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+    `)
+
+    // Getting the PR form the API
+    mockAPI.pulls.get.mockResolvedValue({ data: pr })
+    
+    // Getting the files
+    mockAPI.pulls.listFiles.endpoint.merge.mockResolvedValue({})
+    mockAPI.paginate.mockResolvedValue([{ filename: "/packages/playground-examples/copy/ja/TypeScript/Primitives/Any.ts"}])
+
+    await mergeThroughCodeOwners(api, genericWebhook as any, logger);
+
+    expect(logger.info).toBeCalledWith("Accepting as reasonable to merge");
+  });
 });
