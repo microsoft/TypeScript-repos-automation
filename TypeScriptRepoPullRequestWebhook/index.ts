@@ -26,7 +26,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
 
   // https://github.com/microsoft/TypeScript/settings/hooks/163309719
 
-  const action = req.headers["X-GitHub-Event"] as "pull_request" | "status" | "issue_comment";
+  const action = req.headers["x-github-event"] as "pull_request" | "status" | "issue_comment";
 
   switch (action) {
     case "pull_request":
@@ -42,7 +42,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
       break;
 
     default:
-      context.log.info("Skipped webhook, do not know how to handle ", action, req.headers)
+      context.log.info("Skipped webhook, do not know how to handle ", action)
   }
 
 };
