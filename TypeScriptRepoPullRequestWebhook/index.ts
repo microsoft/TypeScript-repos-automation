@@ -42,7 +42,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
       break;
 
     default:
-      context.log.info("Skipped webhook, do not know how to handle ", action)
+      context.log.info("Skipped webhook, do not know how to handle the event: ", action)
   }
 
 };
