@@ -40,6 +40,9 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
     case "issue_comment":
       await anyRepoHandleIssueCommentPayload(req.body, context)
       break;
+
+    default:
+      context.log.info("Skipped webhook, do not know how to handle ", action)
   }
 
 };
