@@ -30,7 +30,7 @@ describe("for handling merging when green", () => {
     const logger = getFakeLogger();
 
     await mergeThroughCodeOwners(api, { comment: { body: "Good Joke"} } as any, logger);
-    expect(logger.info).toBeCalledWith("No included message, not trying to merge through code owners");
+    expect(logger.info).toBeCalledWith("Issue comment did not include 'ready to merge', skipping merge through code owners checks");
   });
 
   it("handles the phrase in an issue", async () => {

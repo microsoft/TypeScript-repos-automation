@@ -28,12 +28,10 @@ export const hasAccessToMergePRs = async (
   const changedFiles = await getPRChangedFiles(octokit, pr);
   const codeOwners = getCodeOwnersInfo(codeownersText);
 
-  const prAuthor = pr.user.login;
-
   const filesWhichArentOwned = getFilesNotOwnedByCodeOwner(commenterLogin, changedFiles, codeOwners);
 
   if (filesWhichArentOwned.length > 0) {
-    logger.info(`- ${prAuthor}: Bailing because not all files were covered by the codeowners for this review`);
+    logger.info(`- Bailing because not all files for ${commenterLogin} were covered by the codeowners for this review`);
     logger.info(`  Missing: ${filesWhichArentOwned.join(", ")}`);
     return false;
   } else {
