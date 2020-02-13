@@ -30,5 +30,5 @@ export const mergeThroughCodeOwners = async (api: Octokit, payload: WebhookPaylo
   }
 
   logger.info("Looks good to merge")
-  mergeOrAddMergeLabel(api, {  number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login }, pull.head.sha, logger)
+  await mergeOrAddMergeLabel(api, {  number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login }, pull.head.sha, logger)
 }
