@@ -9,21 +9,21 @@ import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment"
 
 it("calls handle PR from the webhook main", () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "X-GitHub-Event": "pull_request" }})
+  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "x-github-event": "pull_request" }})
 
   expect(handlePullRequestPayload).toHaveBeenCalled()
 })
 
 it("calls handle status from the webhook main", () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "X-GitHub-Event": "status" }})
+  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "x-github-event": "status" }})
 
   expect(anyRepoHandleStatusUpdate).toHaveBeenCalled()
 })
 
 it("calls handle cmments from the webhook main", () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "X-GitHub-Event": "issue_comment" }})
+  webhook({ log: { info: () => "" }} as any, { body: "{}", headers: { "x-github-event": "issue_comment" }})
 
   expect(anyRepoHandleIssueCommentPayload).toHaveBeenCalled()
 })
