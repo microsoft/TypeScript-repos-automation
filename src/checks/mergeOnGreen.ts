@@ -33,7 +33,7 @@ export const mergeOnGreen = async (api: Octokit, payload: WebhookPayloadStatus, 
     const issue = await api.issues.get({ owner, repo, number })
 
     // Get the PR combined status
-    const mergeLabel = issue.data.labels.find(l => l.name === "Merge On Green")
+    const mergeLabel = issue.data.labels.find(l => l.name.toLowerCase() === "merge on green")
     if (!mergeLabel) {
       return logger.info(`PR ${number} does not have Merge on Green`)
     }
