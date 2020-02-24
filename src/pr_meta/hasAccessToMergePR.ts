@@ -54,7 +54,7 @@ export function getFilesNotOwnedByCodeOwner(commenterLogin: string, files: strin
   let matched = [...files]
   activeCodeOwners.forEach(owners => {
     matched.forEach((file, index) => {
-      if(minimatch(file, owners.path)) {
+      if (minimatch(file, owners.path)) {
         matched.splice(index,1);
       }
     });
