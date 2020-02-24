@@ -36,6 +36,8 @@ export const mergeOnGreen = async (api: Octokit, payload: WebhookPayloadStatus, 
     const mergeLabel = issue.data.labels.find(l => l.name.toLowerCase() === "merge on green")
     if (!mergeLabel) {
       return logger.info(`PR ${number} does not have Merge on Green`)
+    } else {
+      logger.info(`Merging PR ${number} via Merge on Green`)
     }
 
     let commitTitle = `Merge pull request #${number} by microsoft/typescript-repos-automation`
