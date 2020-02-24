@@ -54,7 +54,7 @@ describe("for handling merging when green", () => {
 
     await mergeOnGreen(api, webhook, logger);
 
-    expect(logger.info).toBeCalledWith("PR does not have Merge on Green");
+    expect(logger.info).toBeCalledWith("PR 1 does not have Merge on Green");
   });
 
   it("triggers a PR merge when there is a merge on green label", async () => {

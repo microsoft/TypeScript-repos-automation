@@ -48,6 +48,7 @@ describe("for handling merging when green", () => {
     const pr = getPRFixture("api-pr-closed")
     // @ts-ignore
     getContents.mockReturnValue("/hello.txt @orta")
+    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" }})
 
     // Getting the PR form the API
     mockAPI.pulls.get.mockResolvedValue({ data: pr })
@@ -66,15 +67,17 @@ describe("for handling merging when green", () => {
     const { api, mockAPI } = createMockGitHubClient();
     const logger = getFakeLogger();
     const pr = getPRFixture("api-pr-closed")
+    
     // @ts-ignore
     getContents.mockReturnValue(`
-/packages/playground-examples/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
-/packages/tsconfig-reference/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
-/packages/typescriptlang-org/src/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+    /packages/playground-examples/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+    /packages/tsconfig-reference/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
+    /packages/typescriptlang-org/src/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
     `)
-
+    
     // Getting the PR form the API
     mockAPI.pulls.get.mockResolvedValue({ data: pr })
+    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" }})
     
     // Getting the files
     mockAPI.pulls.listFiles.endpoint.merge.mockResolvedValue({})
