@@ -1,4 +1,4 @@
-import {Logger} from "@azure/functions"
+import { Logger } from "@azure/functions"
 
 const cliLogger = (...args: any[]) => {
   console.log(args)

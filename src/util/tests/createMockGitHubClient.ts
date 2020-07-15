@@ -1,7 +1,7 @@
-import Octokit = require("@octokit/rest");
-import { readFileSync } from "fs";
-import { join } from "path";
-import { WebhookPayloadPullRequest, WebhookPayloadIssues } from "@octokit/webhooks";
+import { Octokit } from "@octokit/rest"
+import { readFileSync } from "fs"
+import { join } from "path"
+import { WebhookPayloadPullRequest, WebhookPayloadIssues } from "@octokit/webhooks"
 
 /**
  * Creates a version of the GitHub API client where API calls
@@ -24,47 +24,47 @@ export const createMockGitHubClient = () => {
     repos: {
       checkCollaborator: jest.fn(),
       getContents: jest.fn(),
-      getCombinedStatusForRef: jest.fn()
+      getCombinedStatusForRef: jest.fn(),
     },
     issues: {
       addAssignees: jest.fn(),
       addLabels: jest.fn(),
-      get: jest.fn()
+      get: jest.fn(),
     },
     pulls: {
       get: jest.fn(),
       merge: jest.fn(),
       listFiles: {
         endpoint: {
-          merge: jest.fn()
-        } 
-      }
+          merge: jest.fn(),
+        },
+      },
     },
     teams: {
       getByName: jest.fn(),
-      getMembership: jest.fn()
+      getMembership: jest.fn(),
     },
     search: {
-      issues: jest.fn()
+      issues: jest.fn(),
     },
-    paginate: jest.fn()
-  };
+    paginate: jest.fn(),
+  }
 
   return {
     mockAPI,
-    api: convertToOctokitAPI(mockAPI)
-  };
-};
+    api: convertToOctokitAPI(mockAPI),
+  }
+}
 
 // Converts any jest.fn in the above function into a Promise to ensure
 // that these two functions are kept in sync
 
 type JestMockToPromise<Type> = {
-  [Property in keyof Type]: { [SubProperty in keyof Type[Property]]: Promise<any> };
-};
+  [Property in keyof Type]: { [SubProperty in keyof Type[Property]]: Promise<any> }
+}
 
 // Hardcoding mapped types like this makes it easy to see the results in the hover
-type PromisifiedInferredJestObj = JestMockToPromise<ReturnType<typeof createMockGitHubClient>["mockAPI"]>;
+type PromisifiedInferredJestObj = JestMockToPromise<ReturnType<typeof createMockGitHubClient>["mockAPI"]>
 
 /**
  * A Fake GitHub client which lets you work with fake responses while working in development
@@ -79,25 +79,25 @@ export const createFakeGitHubClient = () => {
     issues: {
       addAssignees: Promise.resolve({}),
       addLabels: Promise.resolve({}),
-      get: Promise.resolve({})
+      get: Promise.resolve({}),
     },
     pulls: {
       get: Promise.resolve({}),
       merge: Promise.resolve({}),
-      listFiles: Promise.resolve({})
+      listFiles: Promise.resolve({}),
     },
     teams: {
-      getByName: Promise.resolve({ }),
-      getMembership: Promise.resolve({ status: 200 })
+      getByName: Promise.resolve({}),
+      getMembership: Promise.resolve({ status: 200 }),
     },
     search: {
-      issues: Promise.resolve({})
+      issues: Promise.resolve({}),
     },
-    paginate: Promise.resolve({}) as any
-  };
+    paginate: Promise.resolve({}) as any,
+  }
 
-  return (fake as unknown) as Octokit;
-};
+  return (fake as unknown) as Octokit
+}
 
 /**
  * Assertion functions don't work when the param type is inferred,
@@ -106,14 +106,13 @@ export const createFakeGitHubClient = () => {
  * the better option.
  */
 export const convertToOctokitAPI = (mock: {}) => {
-  return (mock as unknown) as Octokit;
-};
+  return (mock as unknown) as Octokit
+}
 
 /** Grabs a known PR fixture */
-export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed", 
-): WebhookPayloadPullRequest =>
-  JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"));
+export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): WebhookPayloadPullRequest =>
+  JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"))
 
 /** Grabs a known issue fixture */
 export const getIssueFixture = (fixture: "created" | "labeled"): WebhookPayloadIssues =>
-  JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"));
+  JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"))

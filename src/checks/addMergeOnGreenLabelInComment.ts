@@ -1,13 +1,21 @@
-import { WebhookPayloadPullRequest, WebhookPayloadIssueComment, WebhookPayloadPullRequestReview } from "@octokit/webhooks";
-import * as Octokit from "@octokit/rest";
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam";
-import type { Logger } from "@azure/functions";
-import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel";
+import {
+  WebhookPayloadPullRequest,
+  WebhookPayloadIssueComment,
+  WebhookPayloadPullRequestReview,
+} from "@octokit/webhooks"
+import { Octokit } from "@octokit/rest"
+import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
+import type { Logger } from "@azure/functions"
+import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
 
 /**
  * If the PR comes from a core contributor, add a label to indicate it came from a maintainer
  */
-export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloadIssueComment | WebhookPayloadPullRequestReview, logger: Logger) => {
+export const addLabelForTeamMember = async (
+  api: Octokit,
+  payload: WebhookPayloadIssueComment | WebhookPayloadPullRequestReview,
+  logger: Logger
+) => {
   const org = payload.repository.owner.login
 
   let issue: WebhookPayloadIssueComment["issue"] = null!
@@ -60,7 +68,7 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
 
   // Check for org access, so that some rando doesn't
   // try to merge something without permission
-  const isTeamMember = await isMemberOfTSTeam(payload.sender.login, api, logger);
+  const isTeamMember = await isMemberOfTSTeam(payload.sender.login, api, logger)
   if (!isTeamMember) {
     return logger.info(`Skipping because ${payload.sender.login} is not a member of the TS team`)
   }
@@ -75,5 +83,5 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   const prResponse = await api.pulls.get(repo)
   await mergeOrAddMergeLabel(api, repo, prResponse.data.head.sha, logger)
 
-console.log("Updated the PR with a Merge on Green label")
+  console.log("Updated the PR with a Merge on Green label")
 }

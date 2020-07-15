@@ -1,6 +1,6 @@
-import { WebhookPayloadIssues } from "@octokit/webhooks";
-import { Context } from "@azure/functions";
-import { sha } from "./sha";
+import { WebhookPayloadIssues } from "@octokit/webhooks"
+import { Context } from "@azure/functions"
+import { sha } from "./sha"
 
 export const handleIssuePayload = async (payload: WebhookPayloadIssues, context: Context) => {
   // NOOP
@@ -8,6 +8,6 @@ export const handleIssuePayload = async (payload: WebhookPayloadIssues, context:
   context.res = {
     status: 200,
     headers: { sha: sha },
-    body: "Success, but NOOP"
-  };
-};
+    body: "Success, but NOOP",
+  }
+}

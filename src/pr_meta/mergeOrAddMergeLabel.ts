@@ -1,15 +1,15 @@
-import * as Octokit from "@octokit/rest";
-import { Logger } from "@azure/functions";
+import { Octokit } from "@octokit/rest"
+import { Logger } from "@azure/functions"
 
 type PullMeta = {
-  repo: string,
-  owner: string,
+  repo: string
+  owner: string
   number: number
 }
 
 export const mergeOrAddMergeLabel = async (api: Octokit, pullMeta: PullMeta, headCommitSHA: string, logger: Logger) => {
   const allGreen = await api.repos.getCombinedStatusForRef({ ...pullMeta, ref: headCommitSHA })
-  
+
   if (allGreen.data.state === "success") {
     logger("Merging")
     // Merge now
