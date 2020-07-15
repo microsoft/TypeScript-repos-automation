@@ -3,7 +3,7 @@ import { Octokit } from "@octokit/rest"
 import { Context } from "@azure/functions"
 import { getCodeOwners, findMatchingOwners } from "./getCodeOwners"
 
-type PullRequest = import("@octokit/rest").PullsGetResponse
+type PullRequest = import("@octokit/rest").Octokit.PullsGetResponse
 
 /** The context around which you can make decisions  */
 export interface PRFilesContext {

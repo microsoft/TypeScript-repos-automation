@@ -24,7 +24,7 @@ import { createMockContext } from "./createMockContext"
  *   const dtContext = await createMockDTContext(api, context, {})
  */
 export const createMockPRFileContext = async (
-  api: import("@octokit/rest"),
+  api: import("@octokit/rest").Octokit,
   context: Context,
   overrides: Partial<PRFilesContext>
 ) => {

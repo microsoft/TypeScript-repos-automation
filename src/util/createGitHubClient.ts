@@ -1,4 +1,4 @@
-import * as Octokit from "@octokit/rest"
+import { Octokit } from "@octokit/rest"
 
 const inTests = typeof jest !== "undefined"
 if (!inTests) {
