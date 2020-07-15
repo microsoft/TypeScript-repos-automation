@@ -4,7 +4,7 @@ import { Logger } from "@azure/functions"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
 
 /**
- * Keep track of the milstone
+ * Keep track of the milestone related PRs which are based on linked issues in the PR body
  */
 export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
   const { repository: repo, pull_request } = payload
