@@ -1,90 +1,93 @@
-jest.mock("../util/getContents");
+jest.mock("../util/getContents")
 
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient";
-import { getFakeLogger } from "../util/tests/createMockContext";
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
+import { getFakeLogger } from "../util/tests/createMockContext"
 
-import { mergeThroughCodeOwners, mergePhrase } from "./mergeThroughCodeOwners";
-import { getContents } from "../util/getContents";
+import { mergeThroughCodeOwners, mergePhrase } from "./mergeThroughCodeOwners"
+import { getContents } from "../util/getContents"
 
-const genericWebhook =   {
-  comment: { 
-    body: mergePhrase, 
+const genericWebhook = {
+  comment: {
+    body: mergePhrase,
     user: {
-      login: "orta"
-    }
+      login: "orta",
+    },
   },
   issue: {
-    number: 1234
+    number: 1234,
   },
   repository: {
     owner: {
-      login: "microsoft"
+      login: "microsoft",
     },
-    name: "TypeScript-Website"
-  }
+    name: "TypeScript-Website",
+  },
 }
 
 describe("for handling merging when green", () => {
   it("bails when the keyword aren't used", async () => {
-    const { api } = createMockGitHubClient();
-    const logger = getFakeLogger();
+    const { api } = createMockGitHubClient()
+    const logger = getFakeLogger()
 
-    await mergeThroughCodeOwners(api, { comment: { body: "Good Joke"} } as any, logger);
-    expect(logger.info).toBeCalledWith("Issue comment did not include 'ready to merge', skipping merge through code owners checks");
-  });
+    await mergeThroughCodeOwners(api, { comment: { body: "Good Joke" } } as any, logger)
+    expect(logger.info).toBeCalledWith(
+      "Issue comment did not include 'ready to merge', skipping merge through code owners checks"
+    )
+  })
 
   it("handles the phrase in an issue", async () => {
-    const { api, mockAPI } = createMockGitHubClient();
+    const { api, mockAPI } = createMockGitHubClient()
     mockAPI.pulls.get.mockRejectedValue(new Error("not found"))
-    const logger = getFakeLogger();
+    const logger = getFakeLogger()
 
-    await mergeThroughCodeOwners(api, genericWebhook as any, logger);
-    expect(logger.info).toBeCalledWith("Comment was in an issue");
-  });
+    await mergeThroughCodeOwners(api, genericWebhook as any, logger)
+    expect(logger.info).toBeCalledWith("Comment was in an issue")
+  })
 
   it("handles the phrase in an pr", async () => {
-    const { api, mockAPI } = createMockGitHubClient();
-    const logger = getFakeLogger();
+    const { api, mockAPI } = createMockGitHubClient()
+    const logger = getFakeLogger()
     const pr = getPRFixture("api-pr-closed")
     // @ts-ignore
     getContents.mockReturnValue("/hello.txt @orta")
-    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" }})
+    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" } })
 
     // Getting the PR form the API
     mockAPI.pulls.get.mockResolvedValue({ data: pr })
-    
+
     // Getting the files
     mockAPI.pulls.listFiles.endpoint.merge.mockResolvedValue({})
-    mockAPI.paginate.mockResolvedValue([{ filename: "/hello.txt"}])
+    mockAPI.paginate.mockResolvedValue([{ filename: "/hello.txt" }])
 
-    await mergeThroughCodeOwners(api, genericWebhook as any, logger);
+    await mergeThroughCodeOwners(api, genericWebhook as any, logger)
 
-    expect(logger.info).toBeCalledWith("Accepting as reasonable to merge");
-  });
-
+    expect(logger.info).toBeCalledWith("Accepting as reasonable to merge")
+  })
 
   it.skip("handles a complex regex and owner group in an pr", async () => {
-    const { api, mockAPI } = createMockGitHubClient();
-    const logger = getFakeLogger();
+    const { api, mockAPI } = createMockGitHubClient()
+    const logger = getFakeLogger()
     const pr = getPRFixture("api-pr-closed")
-    
+
     // @ts-ignore
     getContents.mockReturnValue(`
     /packages/playground-examples/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
     /packages/tsconfig-reference/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
     /packages/typescriptlang-org/src/copy/ja/** @sasurau4 @Quramy @Naturalclar @Takepepe @orta
     `)
-    
+
     // Getting the PR form the API
     mockAPI.pulls.get.mockResolvedValue({ data: pr })
-    
+
     // Getting the files
     mockAPI.pulls.listFiles.endpoint.merge.mockResolvedValue({})
-    mockAPI.paginate.mockResolvedValue([{ filename: "/packages/playground-examples/copy/ja/TypeScript/Primitives/Any.ts"}])
-    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" }})
-    
-    await mergeThroughCodeOwners(api, genericWebhook as any, logger);
+    mockAPI.paginate.mockResolvedValue([
+      { filename: "/packages/playground-examples/copy/ja/TypeScript/Primitives/Any.ts" },
+    ])
+    mockAPI.repos.getCombinedStatusForRef.mockResolvedValue({ data: { state: "success" } })
 
-    expect(logger.info).toBeCalledWith("Accepting as reasonable to merge");
-  });
-});
+    await mergeThroughCodeOwners(api, genericWebhook as any, logger)
+
+    expect(logger.info).toBeCalledWith("Accepting as reasonable to merge")
+  })
+})

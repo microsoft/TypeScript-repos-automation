@@ -1,23 +1,21 @@
-import { WebhookPayloadStatus } from "@octokit/webhooks";
-import * as Octokit from "@octokit/rest";
-import { Logger } from "@azure/functions";
+import { WebhookPayloadStatus } from "@octokit/webhooks"
+import { Octokit } from "@octokit/rest"
+import { Logger } from "@azure/functions"
 
 /**
- * If the PR comes from a core contributor, set themselves to be the assignee 
+ * If the PR comes from a core contributor, set themselves to be the assignee
  * if one isn't set during the creation of the PR.
  */
 export const mergeOnGreen = async (api: Octokit, payload: WebhookPayloadStatus, logger: Logger) => {
   if (payload.state !== "success") {
-    return logger.info(
-      `Not a successful state - got ${payload.state}`
-    )
+    return logger.info(`Not a successful state - got ${payload.state}`)
   }
 
   // Check to see if all other statuses on the same commit are also green. E.g. is this the last green.
   const owner = payload.repository.owner.login
   const repo = payload.repository.name
   const allGreen = await api.repos.getCombinedStatusForRef({ owner, repo, ref: payload.commit.sha })
-  
+
   if (allGreen.data.state !== "success") {
     return logger.info("Not all statuses are green")
   }

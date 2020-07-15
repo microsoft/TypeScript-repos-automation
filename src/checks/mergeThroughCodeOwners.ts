@@ -1,8 +1,8 @@
-import { WebhookPayloadIssueComment } from "@octokit/webhooks";
-import * as Octokit from "@octokit/rest";
-import { Logger } from "@azure/functions";
-import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR";
-import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel";
+import { WebhookPayloadIssueComment } from "@octokit/webhooks"
+import { Octokit } from "@octokit/rest"
+import { Logger } from "@azure/functions"
+import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR"
+import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
 
 export const mergePhrase = "ready to merge"
 
@@ -18,7 +18,11 @@ export const mergeThroughCodeOwners = async (api: Octokit, payload: WebhookPaylo
   let pull: Octokit.Response<Octokit.PullsGetResponse>["data"]
 
   try {
-    const response = await api.pulls.get({ owner: payload.repository.owner.login, repo: payload.repository.name, pull_number: payload.issue.number, })
+    const response = await api.pulls.get({
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      pull_number: payload.issue.number,
+    })
     pull = response.data
   } catch (error) {
     return logger.info(`Comment was in an issue`)
@@ -30,5 +34,10 @@ export const mergeThroughCodeOwners = async (api: Octokit, payload: WebhookPaylo
   }
 
   logger.info("Looks good to merge")
-  await mergeOrAddMergeLabel(api, {  number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login }, pull.head.sha, logger)
+  await mergeOrAddMergeLabel(
+    api,
+    { number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login },
+    pull.head.sha,
+    logger
+  )
 }

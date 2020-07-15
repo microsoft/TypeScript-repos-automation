@@ -4,7 +4,7 @@ import { handleIssuePayload } from "../typeScriptHandleIssue"
 
 it("calls handle PR from the webhook main", () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({} as any, { body: "{}"})
+  webhook({} as any, { body: "{}" })
 
   expect(handleIssuePayload).toHaveBeenCalled()
 })

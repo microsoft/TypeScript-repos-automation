@@ -1,5 +1,4 @@
-import {Logger, Context} from "@azure/functions"
-
+import { Logger, Context } from "@azure/functions"
 
 /** Returns a logger which conforms to the Azure logger interface */
 export const getFakeLogger = (): Logger => {
@@ -11,10 +10,11 @@ export const getFakeLogger = (): Logger => {
   return cliLogger
 }
 
-/** 
+/**
  * Create a mock context which eats all logs, only contains the logging subset
  * for now, and should be extended if needed
  */
-export const createMockContext = (): Context => ({
-  log: getFakeLogger(),
-} as any) 
+export const createMockContext = (): Context =>
+  ({
+    log: getFakeLogger(),
+  } as any)
