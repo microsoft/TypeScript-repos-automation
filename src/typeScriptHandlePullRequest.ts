@@ -4,6 +4,7 @@ import { createGitHubClient } from "./util/createGitHubClient"
 import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest"
 import { addLabelForTeamMember } from "./checks/addLabelForTeamMember"
 import { assignTeamMemberForRelatedPR } from "./checks/assignTeamMemberForRelatedPR"
+import { addMilestoneLabelsToPRs } from "./checks/addMilestoneLabelsToPRs"
 import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 
@@ -24,6 +25,7 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
   await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest)
   await run("Add a core team label to PRs", addLabelForTeamMember)
   await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR)
+  await run("Adding milestone related labels", addMilestoneLabelsToPRs)
 
   context.res = {
     status: 200,

@@ -28,6 +28,7 @@ export const createMockGitHubClient = () => {
     },
     issues: {
       addAssignees: jest.fn(),
+      replaceLabels: jest.fn(),
       addLabels: jest.fn(),
       get: jest.fn(),
     },
@@ -78,6 +79,7 @@ export const createFakeGitHubClient = () => {
     },
     issues: {
       addAssignees: Promise.resolve({}),
+      replaceLabels: Promise.resolve({}),
       addLabels: Promise.resolve({}),
       get: Promise.resolve({}),
     },
