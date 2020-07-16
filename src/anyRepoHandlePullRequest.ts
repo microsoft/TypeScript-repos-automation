@@ -21,11 +21,12 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
     return fn(api, payload, context.log)
   }
 
-  // Run checks
-  await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest)
-  await run("Add a core team label to PRs", addLabelForTeamMember)
-  await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR)
-  await run("Adding milestone related labels", addMilestoneLabelsToPRs)
+  if (payload.repository.name === "TypeScript") {
+    await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest)
+    await run("Add a core team label to PRs", addLabelForTeamMember)
+    await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR)
+    await run("Adding milestone related labels", addMilestoneLabelsToPRs)
+  }
 
   context.res = {
     status: 200,

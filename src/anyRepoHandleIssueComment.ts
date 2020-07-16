@@ -4,6 +4,7 @@ import { createGitHubClient } from "./util/createGitHubClient"
 import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 import { mergeThroughCodeOwners } from "./checks/mergeThroughCodeOwners"
+import { addOrRemoveReprosLabelOnComments } from "./checks/addOrRemoveReprosLabel"
 
 export const anyRepoHandleIssueCommentPayload = async (payload: WebhookPayloadIssueComment, context: Context) => {
   const api = createGitHubClient()
@@ -21,6 +22,10 @@ export const anyRepoHandleIssueCommentPayload = async (payload: WebhookPayloadIs
   // Making this one whitelisted to the website for now
   if (payload.repository.name === "TypeScript-Website") {
     await run("Checking if we should merge from codeowners", mergeThroughCodeOwners)
+  }
+
+  if (payload.repository.name === "TypeScript") {
+    await run("Checking if we should add the repros label", addOrRemoveReprosLabelOnComments)
   }
 
   context.res = {

@@ -16,7 +16,9 @@ export const anyRepoHandleStatusUpdate = async (payload: WebhookPayloadStatus, c
   }
 
   // Run checks
-  await run("Checking For Merge on Green", mergeOnGreen)
+  if (payload.repository.name === "TypeScript-Website") {
+    await run("Checking For Merge on Green", mergeOnGreen)
+  }
 
   context.res = {
     status: 200,

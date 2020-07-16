@@ -16,7 +16,7 @@ export const mergeOnGreen = async (api: Octokit, payload: WebhookPayloadStatus, 
   const repo = payload.repository.name
 
   const status =  await api.checks.listForRef({ owner, repo, ref: payload.commit.sha })
-  if (status.data.check_runs.every(c => c.conclusion === "SUCCESS")) {
+  if (status.data.check_runs.every(c => c.conclusion !== "SUCCESS")) {
     return logger.info("Not all statuses are green")
   }
 
