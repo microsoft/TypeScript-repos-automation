@@ -1,12 +1,7 @@
-jest.mock("../pr_meta/isMemberOfTSTeam")
-
-import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest"
-import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient"
+import { createMockGitHubClient } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
 
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
 import { mergeOnGreen } from "./mergeOnGreen"
-const mockIsMember = (isMemberOfTSTeam as any) as jest.Mock
 
 describe("for handling merging when green", () => {
   it("bails when its not a success", async () => {
@@ -20,7 +15,7 @@ describe("for handling merging when green", () => {
   it("bails when the whole status is not a success", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const logger = getFakeLogger()
-    mockAPI.repos.getCombinedStatusForRef.mockResolvedValueOnce({ data: { state: "failed" } })
+    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "FAILED" }]}})
 
     const webhook = {
       state: "success",
@@ -38,7 +33,7 @@ describe("for handling merging when green", () => {
     const logger = getFakeLogger()
 
     // Says al CI statuses are green
-    mockAPI.repos.getCombinedStatusForRef.mockResolvedValueOnce({ data: { state: "success" } })
+    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "SUCCESS" }]}})
 
     // Gets a corresponding issue
     mockAPI.search.issues.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })
@@ -62,7 +57,7 @@ describe("for handling merging when green", () => {
     const logger = getFakeLogger()
 
     // Says al CI statuses are green
-    mockAPI.repos.getCombinedStatusForRef.mockResolvedValueOnce({ data: { state: "success" } })
+    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "SUCCESS" }]}})
 
     // Gets a corresponding issue
     mockAPI.search.issues.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })

@@ -2,9 +2,11 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import verify = require("@octokit/webhooks/verify");
 import sign = require("@octokit/webhooks/sign");
 
-import { handlePullRequestPayload } from "../src/typeScriptHandlePullRequest";
+import { handlePullRequestPayload } from "../src/anyRepoHandlePullRequest";
 import { anyRepoHandleStatusUpdate } from "../src/anyRepoHandleStatusUpdate";
 import { anyRepoHandleIssueCommentPayload } from "../src/anyRepoHandleIssueComment";
+import { handleIssuePayload } from "../src/anyRepoHandleIssue";
+
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
 // context and into the `src` directory, where work can be done against tests instead requiring changes to happen
@@ -26,7 +28,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
 
   // https://github.com/microsoft/TypeScript/settings/hooks/163309719
 
-  const action = req.headers["x-github-event"] as "pull_request" | "status" | "issue_comment";
+  const action = req.headers["x-github-event"] as "pull_request" | "status" | "issue_comment" | "issue";
 
   switch (action) {
     case "pull_request":
@@ -39,6 +41,10 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
 
     case "issue_comment":
       await anyRepoHandleIssueCommentPayload(req.body, context)
+      break;
+
+    case "issue":
+      await handleIssuePayload(req.body, context)
       break;
 
     default:
