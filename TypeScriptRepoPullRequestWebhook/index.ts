@@ -28,7 +28,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
 
   // https://github.com/microsoft/TypeScript/settings/hooks/163309719
 
-  const action = req.headers["x-github-event"] as "pull_request" | "status" | "issue_comment" | "issue";
+  const action = req.headers["x-github-event"] as "pull_request" | "status" | "issue_comment" | "issues";
 
   switch (action) {
     case "pull_request":
@@ -43,7 +43,7 @@ const httpTrigger: AzureFunction = async function(context: Context, req: HttpReq
       await anyRepoHandleIssueCommentPayload(req.body, context)
       break;
 
-    case "issue":
+    case "issues":
       await handleIssuePayload(req.body, context)
       break;
 
