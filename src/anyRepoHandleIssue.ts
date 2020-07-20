@@ -20,6 +20,10 @@ export const handleIssuePayload = async (payload: WebhookPayloadIssues, context:
 
   if (payload.repository.name === "TypeScript") {
     run("Adding repro tags from issue bodies", addOrRemoveReprosLabelOnIssue)
+
+    if (payload.action === "labeled") {
+
+    } 
   }
 
   context.res = {
