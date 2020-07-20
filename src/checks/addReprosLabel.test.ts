@@ -1,20 +1,24 @@
 jest.mock("../pr_meta/isMemberOfTSTeam")
+jest.mock("./pingDiscordForReproRequests")
+
 
 import { createMockGitHubClient, getIssueFixture, getIssueCommentFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
 
-import { addOrRemoveReprosLabelOnComments, addOrRemoveReprosLabelOnIssue } from "./addOrRemoveReprosLabel"
+import { addReprosLabelOnComments, addReprosLabelOnIssue } from "./addReprosLabel"
+import {pingDiscord} from "./pingDiscordForReproRequests"
 
 
-describe(addOrRemoveReprosLabelOnIssue, () => {
+describe(addReprosLabelOnIssue, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueFixture("opened")
     payload.action = "closed"
 
-    await addOrRemoveReprosLabelOnIssue(api, payload, getFakeLogger())
+    await addReprosLabelOnIssue(api, payload, getFakeLogger())
 
-    expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
+    expect(pingDiscord).not.toHaveBeenCalled()
   })
 
   it("Adds the label when it has a repro in the body ", async () => {
@@ -22,7 +26,7 @@ describe(addOrRemoveReprosLabelOnIssue, () => {
     const payload = getIssueFixture("opened")
     payload.issue.body = "```ts repro"
 
-    await addOrRemoveReprosLabelOnIssue(api, payload, getFakeLogger())
+    await addReprosLabelOnIssue(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
       labels: ["Has Repro"],
@@ -30,6 +34,8 @@ describe(addOrRemoveReprosLabelOnIssue, () => {
       owner: "microsoft",
       repo: "TypeScript",
     })
+
+    expect(pingDiscord).toHaveBeenCalled()
   })
 
 
@@ -38,20 +44,20 @@ describe(addOrRemoveReprosLabelOnIssue, () => {
     const payload = getIssueFixture("opened")
     payload.issue.body = ""
 
-    await addOrRemoveReprosLabelOnIssue(api, payload, getFakeLogger())
+    await addReprosLabelOnIssue(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })
 })
 
 
-describe(addOrRemoveReprosLabelOnComments, () => {
+describe(addReprosLabelOnComments, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueCommentFixture("created")
     payload.action = "closed"
 
-    await addOrRemoveReprosLabelOnComments(api, payload, getFakeLogger())
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })
@@ -61,7 +67,7 @@ describe(addOrRemoveReprosLabelOnComments, () => {
     const payload = getIssueCommentFixture("created")
     payload.comment.body = "```ts repro"
 
-    await addOrRemoveReprosLabelOnComments(api, payload, getFakeLogger())
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
       labels: ["Has Repro"],
@@ -69,6 +75,7 @@ describe(addOrRemoveReprosLabelOnComments, () => {
       owner: "microsoft",
       repo: "TypeScript-Website",
     })
+    expect(pingDiscord).toHaveBeenCalled()
   })
 
   it("NOOPs when there isn't a repro in the body ", async () => {
@@ -76,7 +83,7 @@ describe(addOrRemoveReprosLabelOnComments, () => {
     const payload = getIssueCommentFixture("created")
     payload.comment.body = ""
 
-    await addOrRemoveReprosLabelOnComments(api, payload, getFakeLogger())
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })

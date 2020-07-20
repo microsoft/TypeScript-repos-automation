@@ -11,34 +11,51 @@ export const pingDiscordForReproRequests = async (api: Octokit, payload: Webhook
 
   const label = (payload as any).label
   if (label && label.name && label.name === "Repro Requested") {
-    if (!process.env.REPRO_REQUEST_DISCORD_WEBHOOK) throw new Error("No process var for REPRO_REQUEST_DISCORD_WEBHOOK")
-
+    
     // https://discord.com/developers/docs/resources/webhook#execute-webhook
-
-    let body = issue.body.slice(0, 199)
-    // The template has comments which might have been kept in
-    if (issue.body.includes("𝗦𝗧𝗢𝗣") && issue.body.includes("## Use Cases")) {
-      // https://regex101.com/r/uEmvAZ/1
-      const stripComments = /<!--[^>]*-->/g
-      body = issue.body.replace(stripComments, "").split("## Use Cases")[1].split("## Checklist")[0].slice(0, 199)
-    }
-
-    const webhook = {
-      content: `Repro requested on #${issue.number}`,
-      embeds: [
-        {
-          title: issue.title,
-          description: body.length === 200 ? body + "..." : body,
-          url: issue.html_url,
-        },
-      ],
-    }
+    const body = stripBody(issue.body)
 
     logger.info("Sending Discord ping")
-    fetch(process.env.REPRO_REQUEST_DISCORD_WEBHOOK, {
-      method: "POST",
-      body: JSON.stringify(webhook),
-      headers: { "Content-Type": "application/json" },
+    await pingDiscord(`Repro requested on #${issue.number}`, {
+      number: issue.number,
+      title: issue.title,
+      body: body,
+      url: issue.html_url,
     })
   }
+}
+
+export const pingDiscord = async (msg: string, config: { number: number; title: string; body: string; url: string }) => {
+  if (!process.env.REPRO_REQUEST_DISCORD_WEBHOOK) throw new Error("No process var for REPRO_REQUEST_DISCORD_WEBHOOK")
+
+  const webhook = {
+    content: msg,
+    embeds: [
+      {
+        title: config.title,
+        description: config.body.length === 200 ? config.body + "..." : config.body,
+        url: config.url,
+      },
+    ],
+  }
+
+  const response = await fetch(process.env.REPRO_REQUEST_DISCORD_WEBHOOK, {
+    method: "POST",
+    body: JSON.stringify(webhook),
+    headers: { "Content-Type": "application/json" },
+  })
+
+  console.log(response)
+}
+
+export const stripBody = (str: string)=> {
+  let body = str.slice(0, 199)
+  // The template has comments which might have been kept in
+  if (str.includes("𝗦𝗧𝗢𝗣") && str.includes("## Use Cases")) {
+    // https://regex101.com/r/uEmvAZ/1
+    const stripComments = /<!--[^>]*-->/g
+    body = str.replace(stripComments, "").split("## Use Cases")[1].split("## Checklist")[0].slice(0, 199)
+  }
+
+  return body
 }
