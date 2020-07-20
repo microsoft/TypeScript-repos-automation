@@ -46,11 +46,13 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayl
   }
 
   const labelsNeedingToAdd = Object.keys(houseKeepingLabels).filter(l => houseKeepingLabels[l as HouseKeepingKeys])
-  const labelsNeedingToRemove = Object.keys(houseKeepingLabels).filter(l => !houseKeepingLabels[l as HouseKeepingKeys])
+  const labelsNeedingToRemove = Object.keys(houseKeepingLabels).filter(l => !houseKeepingLabels[l as HouseKeepingKeys]).filter(f => pull_request.labels.find(l => l.name === f))
 
-  const newLabels = [...pull_request.labels.map(l => l.name), ...labelsNeedingToAdd].filter(l => !labelsNeedingToRemove.includes(l))
+  for (const toRemove of labelsNeedingToRemove) {
+    await api.issues.removeLabel({ ...thisIssue, name: toRemove })
+  }
 
-  if (labelsNeedingToRemove.length || labelsNeedingToRemove.length) {
-    api.issues.replaceLabels({...thisIssue, labels: newLabels })
+  if (labelsNeedingToAdd.length) {
+    await api.issues.addLabels({ ...thisIssue, labels: labelsNeedingToAdd })
   }
 }

@@ -4,6 +4,7 @@ import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 import { addOrRemoveReprosLabelOnIssue } from "./checks/addOrRemoveReprosLabel"
 import { createGitHubClient } from "./util/createGitHubClient"
+import { pingDiscordForReproRequests } from "./checks/pingDiscordForReproRequests"
 
 export const handleIssuePayload = async (payload: WebhookPayloadIssues, context: Context) => {
   const api = createGitHubClient()
@@ -20,6 +21,10 @@ export const handleIssuePayload = async (payload: WebhookPayloadIssues, context:
 
   if (payload.repository.name === "TypeScript") {
     run("Adding repro tags from issue bodies", addOrRemoveReprosLabelOnIssue)
+
+    if (payload.action === "labeled") {
+      run("Seeing if we should ping discord for the label", pingDiscordForReproRequests)
+    } 
   }
 
   context.res = {
