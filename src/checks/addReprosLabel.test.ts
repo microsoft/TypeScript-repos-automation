@@ -1,13 +1,11 @@
 jest.mock("../pr_meta/isMemberOfTSTeam")
 jest.mock("./pingDiscordForReproRequests")
 
-
 import { createMockGitHubClient, getIssueFixture, getIssueCommentFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
 
 import { addReprosLabelOnComments, addReprosLabelOnIssue } from "./addReprosLabel"
-import {pingDiscord} from "./pingDiscordForReproRequests"
-
+import { pingDiscord } from "./pingDiscordForReproRequests"
 
 describe(addReprosLabelOnIssue, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {
@@ -38,7 +36,6 @@ describe(addReprosLabelOnIssue, () => {
     expect(pingDiscord).toHaveBeenCalled()
   })
 
-
   it("NOOPs when there isn't a repro in the body ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueFixture("opened")
@@ -49,7 +46,6 @@ describe(addReprosLabelOnIssue, () => {
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })
 })
-
 
 describe(addReprosLabelOnComments, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {
@@ -76,6 +72,24 @@ describe(addReprosLabelOnComments, () => {
       repo: "TypeScript-Website",
     })
     expect(pingDiscord).toHaveBeenCalled()
+  })
+
+  it("Removes the 'repro required' label when it has a repro in the body ", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    const payload = getIssueCommentFixture("created")
+    payload.comment.body = "```ts repro"
+    payload.issue.labels = [{ name: "Repro Requested" } as any]
+
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
+
+    expect(mockAPI.issues.addLabels).toHaveBeenCalled()
+    expect(pingDiscord).toHaveBeenCalled()
+    expect(mockAPI.issues.removeLabel).toHaveBeenCalledWith({
+      issue_number: 696,
+      name: "Repro Requested",
+      owner: "microsoft",
+      repo: "TypeScript-Website",
+    })
   })
 
   it("NOOPs when there isn't a repro in the body ", async () => {

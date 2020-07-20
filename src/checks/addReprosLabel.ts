@@ -39,6 +39,10 @@ export const addReprosLabelOnIssue = async (api: Octokit, payload: WebhookPayloa
       body: stripBody(issue.body),
       url: issue.html_url,
     })
+
+    if (issue.labels.find(l => l.name === "Repro Requested")) {
+      await api.issues.removeLabel({ ...thisIssue, name: "Repro Requested" })
+    }
   }
 }
 
@@ -76,5 +80,9 @@ export const addReprosLabelOnComments = async (
       body: comment.body,
       url: comment.html_url,
     })
+
+    if (issue.labels.find(l => l.name === "Repro Requested")) {
+      await api.issues.removeLabel({ ...thisIssue, name: "Repro Requested" })
+    }
   }
 }
