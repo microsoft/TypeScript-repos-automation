@@ -30,6 +30,6 @@ export const handleIssuePayload = async (payload: WebhookPayloadIssues, context:
   context.res = {
     status: 200,
     headers: { sha: sha },
-    body: "Success, but NOOP",
+    body: ran.length ? `Issue success, ran: ${ran.join(", ")}`: "Success, NOOP",
   }
 }

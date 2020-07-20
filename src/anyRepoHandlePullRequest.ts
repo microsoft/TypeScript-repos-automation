@@ -31,6 +31,6 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
   context.res = {
     status: 200,
     headers: { sha: sha },
-    body: `Success, ran: ${ran.join(", ")}`,
+    body: ran.length ? `PR success, ran: ${ran.join(", ")}`: "Success, NOOP",
   }
 }

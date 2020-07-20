@@ -11,7 +11,6 @@ export const pingDiscordForReproRequests = async (api: Octokit, payload: Webhook
 
   const label = (payload as any).label 
   if (label && label.name && label.name === "Repro Requested") {
-    
     if (!process.env.REPRO_REQUEST_DISCORD_WEBHOOK) throw new Error("No process var for REPRO_REQUEST_DISCORD_WEBHOOK")
 
     // https://discord.com/developers/docs/resources/webhook#execute-webhook
@@ -33,6 +32,7 @@ export const pingDiscordForReproRequests = async (api: Octokit, payload: Webhook
       }]
     }
 
+    logger.info("Sending Discord ping")
     fetch(process.env.REPRO_REQUEST_DISCORD_WEBHOOK, { method: "POST", body: JSON.stringify(webhook) })
   }
 }
