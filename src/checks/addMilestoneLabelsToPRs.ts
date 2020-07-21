@@ -55,4 +55,12 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayl
   if (labelsNeedingToAdd.length) {
     await api.issues.addLabels({ ...thisIssue, labels: labelsNeedingToAdd })
   }
+
+  if (houseKeepingLabels["For Milestone Bug"]) {
+    for (const issue of relatedIssues) {
+      if (!issue.labels.find(l => l.name === "Fix Available")) {
+        await api.issues.addLabels({ ...thisIssue, issue_number: issue.number, labels: ["Fix Available"] })
+      }
+    }
+  }
 }
