@@ -39,13 +39,11 @@ export const pingDiscord = async (msg: string, config: { number: number; title: 
     ],
   }
 
-  const response = await fetch(process.env.REPRO_REQUEST_DISCORD_WEBHOOK, {
+  await fetch(process.env.REPRO_REQUEST_DISCORD_WEBHOOK, {
     method: "POST",
     body: JSON.stringify(webhook),
     headers: { "Content-Type": "application/json" },
   })
-
-  console.log(response)
 }
 
 export const stripBody = (str: string)=> {
