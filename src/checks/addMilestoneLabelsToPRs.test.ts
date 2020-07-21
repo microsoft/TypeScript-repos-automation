@@ -45,7 +45,7 @@ describe(addMilestoneLabelsToPRs, () => {
 
   it("Removes a label if milestone doesn't match the current labels", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ number: 1111, assignees: [], milestone: { title: "Not Backlog" }, labels:[] }])
+    mockGetRelatedIssues.mockResolvedValue([{ number: 1111, assignees: [], milestone: { title: "Not Backlog" }, labels: [] }])
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
@@ -78,7 +78,7 @@ describe(addMilestoneLabelsToPRs, () => {
 
   it("Removes a label if milestone doesn't match the current labels", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ assignees: [], milestone: { title: "Not Backlog" } }])
+    mockGetRelatedIssues.mockResolvedValue([{ assignees: [], milestone: { title: "Not Backlog" }, labels: [{ name: "Fix Available"}] }])
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
