@@ -26,7 +26,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const webhook = req.body as NPMWebhook
     const tag = webhook.change.version
-    const isProd = !tag.includes("-")
+    const isProd = !tag.includes("-dev")
     if (isProd) {
         const gh = createGitHubClient()
         const masterRef = await gh.repos.getBranch({ owner: "microsoft", repo: "Make-Monaco-Builds", branch: "master" })
