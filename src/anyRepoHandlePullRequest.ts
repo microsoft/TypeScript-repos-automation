@@ -5,6 +5,7 @@ import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest"
 import { addLabelForTeamMember } from "./checks/addLabelForTeamMember"
 import { assignTeamMemberForRelatedPR } from "./checks/assignTeamMemberForRelatedPR"
 import { addMilestoneLabelsToPRs } from "./checks/addMilestoneLabelsToPRs"
+import { addCommentToUncommittedPRs } from "./checks/addCommentToUncommittedPRs"
 import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 
@@ -26,6 +27,7 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
     await run("Add a core team label to PRs", addLabelForTeamMember)
     await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR)
     await run("Adding milestone related labels", addMilestoneLabelsToPRs)
+    await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs)
   }
 
   context.res = {
