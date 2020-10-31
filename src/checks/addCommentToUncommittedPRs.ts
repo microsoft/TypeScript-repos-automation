@@ -35,10 +35,10 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: WebhookP
     const isCommitted = relatedIssues.some(issue => issue.labels?.find(l => l.name === "Committed" || l.name === "Experience Enhancement" || l.name === "help wanted"))
     if (isSuggestion && !isCommitted && !(await isMemberOfTSTeam(pull_request.user.login, api, logger))) {
       const comments = (await api.issues.listComments(thisIssue)).data
-      if (!comments || !comments.find(c => c.body.startsWith('The typescript team has'))) {
+      if (!comments || !comments.find(c => c.body.startsWith('The TypeScript team has'))) {
         await api.issues.createComment({
           ...thisIssue,
-          body: `The typescript team hasn't accepted the linked issue #${relatedIssues[0].number}. This makes it less likely that we'll review or accept this PR. Try to get the originating issue accepted.`
+          body: `The TypeScript team hasn't accepted the linked issue #${relatedIssues[0].number}. This makes it less likely that we'll review or accept this PR. Try to get the originating issue accepted.`
         })
       }
     }

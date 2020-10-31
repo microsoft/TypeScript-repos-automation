@@ -43,7 +43,7 @@ describe(addCommentToUncommittedPRs, () => {
       issue_number: 35454,
       owner: "microsoft",
       repo: "TypeScript",
-      body: "The typescript team hasn't accepted the linked issue #1. This makes it less likely that we'll review or accept this PR. Try to get the originating issue accepted."
+      body: "The TypeScript team hasn't accepted the linked issue #1. This makes it less likely that we'll review or accept this PR. Try to get the originating issue accepted."
     })
   })
   it("Does not add a comment to an uncommented PR linked to an uncommitted suggestion from the TS team", async () => {
@@ -78,7 +78,7 @@ describe(addCommentToUncommittedPRs, () => {
   it("Does not add a comment to an already-commented PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     mockGetRelatedIssues.mockResolvedValue([{ number: 1, labels: [{ name: "Suggestion" }] }])
-    mockAPI.issues.listComments.mockResolvedValue({ data: [{ body: "The typescript team hasn't accepted the linked issue #1" }] })
+    mockAPI.issues.listComments.mockResolvedValue({ data: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] })
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
