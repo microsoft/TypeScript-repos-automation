@@ -28,6 +28,8 @@ export const createMockGitHubClient = () => {
     },
     issues: {
       addAssignees: jest.fn(),
+      createComment: jest.fn(),
+      listComments: jest.fn(),
       replaceLabels: jest.fn(),
       addLabels: jest.fn(),
       removeLabel: jest.fn(),
@@ -83,6 +85,8 @@ export const createFakeGitHubClient = () => {
     },
     issues: {
       addAssignees: Promise.resolve({}),
+      createComment: Promise.resolve({}),
+      listComments: Promise.resolve({}),
       replaceLabels: Promise.resolve({}),
       addLabels: Promise.resolve({}),
       removeLabel: Promise.resolve({}),

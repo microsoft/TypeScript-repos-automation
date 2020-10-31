@@ -10,7 +10,7 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayl
   const { repository: repo, pull_request } = payload
 
   const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
-  
+
   const houseKeepingLabels = {
     "For Milestone Bug": false,
     "For Backlog Bug": false,
