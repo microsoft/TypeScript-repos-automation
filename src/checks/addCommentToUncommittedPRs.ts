@@ -9,7 +9,7 @@ import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
  */
 export const addCommentToUncommittedPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
   const { repository: repo, pull_request } = payload
-  if (pull_request.merged || !(await isMemberOfTSTeam(pull_request.user.login, api, logger))) {
+  if (pull_request.merged || await isMemberOfTSTeam(pull_request.user.login, api, logger)) {
     return
   }
 
