@@ -4,11 +4,7 @@ jest.mock("../pr_meta/isMemberOfTSTeam")
 import { addCommentToUncommittedPRs } from "./addCommentToUncommittedPRs"
 import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
-
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
-const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
-const mockIsMember = (isMemberOfTSTeam as any) as jest.Mock
+import { createPRInfo } from "../util/tests/createPRInfo"
 
 describe(addCommentToUncommittedPRs, () => {
   it("Adds a comment to an uncommented, unlinked PR", async () => {
@@ -17,7 +13,8 @@ describe(addCommentToUncommittedPRs, () => {
     const pr = getPRFixture("opened")
     pr.pull_request.body = "Cool Ghosts"
 
-    await addCommentToUncommittedPRs(api, pr, getFakeLogger())
+    const info = createPRInfo()
+    await addCommentToUncommittedPRs(api, pr, getFakeLogger(),info)
 
     expect(mockAPI.issues.createComment).toHaveBeenCalledWith({
       issue_number: 35454,
@@ -30,14 +27,12 @@ describe(addCommentToUncommittedPRs, () => {
 
   it("Adds a comment to an uncommented PR linked to uncommitted suggestion", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockAPI.issues.listComments.mockResolvedValue({ data: [] })
-    mockGetRelatedIssues.mockResolvedValue([{ number: 1, labels: [{ name: "Suggestion" }] }])
-    mockIsMember.mockResolvedValue(false)
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1`
 
-    await addCommentToUncommittedPRs(api, pr, getFakeLogger())
+    const info = createPRInfo({ relatedIssues: [{ number: 1, labels: [({ name: "Suggestion" })] }]} as any)
+    await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).toHaveBeenCalledWith({
       issue_number: 35454,
@@ -46,30 +41,28 @@ describe(addCommentToUncommittedPRs, () => {
       body: "The TypeScript team hasn't accepted the linked issue #1. If you can get it accepted, this PR will have a better chance of being reviewed."
     })
   })
+
   it("Does not add a comment to an uncommented PR linked to an uncommitted suggestion from the TS team", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockAPI.issues.listComments.mockResolvedValue({ data: [] })
-    mockGetRelatedIssues.mockResolvedValue([{ number: 1, labels: [{ name: "Suggestion" }] }])
-    mockIsMember.mockResolvedValue(true)
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1`
 
-    await addCommentToUncommittedPRs(api, pr, getFakeLogger())
+    const info = createPRInfo({  authorIsMemberOfTSTeam: true,  relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any} )
+    await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
   })
+
   for (const allowed of ["Experience Enhancement", "Committed", "help wanted"]) {
     it("Does not add a comment to an uncommented PR linked to a suggestion with the label " + allowed, async () => {
       const { mockAPI, api } = createMockGitHubClient()
-      mockAPI.issues.listComments.mockResolvedValue({ data: [] })
-      mockGetRelatedIssues.mockResolvedValue([{ number: 1, labels: [{ name: "Suggestion" }, { name: allowed }] }])
-      mockIsMember.mockResolvedValue(false)
-
+      
       const pr = getPRFixture("opened")
       pr.pull_request.body = `fixes #1`
-
-      await addCommentToUncommittedPRs(api, pr, getFakeLogger())
+      
+      const info = createPRInfo({ relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }, { name: allowed }] }] as any} )
+      await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
       expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
     })
@@ -77,15 +70,18 @@ describe(addCommentToUncommittedPRs, () => {
 
   it("Does not add a comment to an already-commented PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ number: 1, labels: [{ name: "Suggestion" }] }])
-    mockAPI.issues.listComments.mockResolvedValue({ data: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] })
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
     pr.pull_request.labels = [{ name: "For Backlog Bug" }]
 
-    await addCommentToUncommittedPRs(api, pr, getFakeLogger())
+    const info = createPRInfo({ 
+      comments: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] as any,
+      relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any
+    })
+    await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
   })
 })
+
