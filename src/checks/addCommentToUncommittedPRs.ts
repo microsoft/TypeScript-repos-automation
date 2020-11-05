@@ -9,7 +9,7 @@ import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
  */
 export const addCommentToUncommittedPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
   const { repository: repo, pull_request } = payload
-  if (pull_request.merged) {
+  if (pull_request.merged || !(await isMemberOfTSTeam(pull_request.user.login, api, logger))) {
     return
   }
 
@@ -32,7 +32,7 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: WebhookP
   else {
     const isSuggestion = relatedIssues.some(issue => issue.labels?.find(l => l.name === "Suggestion"))
     const isCommitted = relatedIssues.some(issue => issue.labels?.find(l => l.name === "Committed" || l.name === "Experience Enhancement" || l.name === "help wanted"))
-    if (isSuggestion && !isCommitted && !(await isMemberOfTSTeam(pull_request.user.login, api, logger))) {
+    if (isSuggestion && !isCommitted) {
       const comments = (await api.issues.listComments(thisIssue)).data
       if (!comments || !comments.find(c => c.body.startsWith('The TypeScript team has'))) {
         await api.issues.createComment({
