@@ -23,7 +23,7 @@ describe(addCommentToUncommittedPRs, () => {
       issue_number: 35454,
       owner: "microsoft",
       repo: "TypeScript",
-      body: "The PR doesn't have any linked issues. Please open an issue that references this PR. From there we can discuss and prioritise.",
+      body: "This PR doesn't have any linked issues. Please open an issue that references this PR. From there we can discuss and prioritise.",
     })
     expect(mockAPI.issues.removeLabel).not.toHaveBeenCalled()
   })
@@ -43,7 +43,7 @@ describe(addCommentToUncommittedPRs, () => {
       issue_number: 35454,
       owner: "microsoft",
       repo: "TypeScript",
-      body: "The TypeScript team hasn't accepted the linked issue #1. This makes it less likely that we'll review or accept this PR. Try to get the originating issue accepted."
+      body: "The TypeScript team hasn't accepted the linked issue #1. If you can get it accepted, this PR will have a better chance of being reviewed."
     })
   })
   it("Does not add a comment to an uncommented PR linked to an uncommitted suggestion from the TS team", async () => {
