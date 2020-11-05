@@ -4,13 +4,7 @@ jest.mock("../pr_meta/isMemberOfTSTeam")
 import { addCommentToUncommittedPRs } from "./addCommentToUncommittedPRs"
 import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
-
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
-import { PRInfo } from "../anyRepoHandlePullRequest"
-const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
-const mockIsMember = (isMemberOfTSTeam as any) as jest.Mock
-
+import { createPRInfo } from "../util/tests/createPRInfo"
 
 describe(addCommentToUncommittedPRs, () => {
   it("Adds a comment to an uncommented, unlinked PR", async () => {
@@ -19,7 +13,7 @@ describe(addCommentToUncommittedPRs, () => {
     const pr = getPRFixture("opened")
     pr.pull_request.body = "Cool Ghosts"
 
-    const info = createInfo()
+    const info = createPRInfo()
     await addCommentToUncommittedPRs(api, pr, getFakeLogger(),info)
 
     expect(mockAPI.issues.createComment).toHaveBeenCalledWith({
@@ -37,7 +31,7 @@ describe(addCommentToUncommittedPRs, () => {
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1`
 
-    const info = createInfo({ relatedIssues: [{ number: 1, labels: [({ name: "Suggestion" })] }]} as any)
+    const info = createPRInfo({ relatedIssues: [{ number: 1, labels: [({ name: "Suggestion" })] }]} as any)
     await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).toHaveBeenCalledWith({
@@ -54,7 +48,7 @@ describe(addCommentToUncommittedPRs, () => {
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1`
 
-    const info = createInfo({  authorIsMemberOfTSTeam: true,  relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any} )
+    const info = createPRInfo({  authorIsMemberOfTSTeam: true,  relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any} )
     await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
@@ -67,7 +61,7 @@ describe(addCommentToUncommittedPRs, () => {
       const pr = getPRFixture("opened")
       pr.pull_request.body = `fixes #1`
       
-      const info = createInfo({ relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }, { name: allowed }] }] as any} )
+      const info = createPRInfo({ relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }, { name: allowed }] }] as any} )
       await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
       expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
@@ -81,7 +75,7 @@ describe(addCommentToUncommittedPRs, () => {
     pr.pull_request.body = `fixes #1123`
     pr.pull_request.labels = [{ name: "For Backlog Bug" }]
 
-    const info = createInfo({ 
+    const info = createPRInfo({ 
       comments: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] as any,
       relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any
     })
@@ -91,17 +85,3 @@ describe(addCommentToUncommittedPRs, () => {
   })
 })
 
-
-const createInfo = (info?: Partial<PRInfo>): PRInfo => {
-  return {
-    comments: [],
-    authorIsMemberOfTSTeam: false,
-    relatedIssues: [],
-    thisIssue: {
-      issue_number: 35454,
-      owner: "microsoft",
-      repo: "TypeScript",
-    },
-    ...info
-  }
-}

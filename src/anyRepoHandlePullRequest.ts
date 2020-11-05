@@ -58,7 +58,7 @@ const generatePRInfo = async (api: Octokit, payload: WebhookPayloadPullRequest, 
   const options = api.issues.listComments.endpoint.merge(thisIssue)
   const comments: Octokit.IssuesListCommentsResponse = await api.paginate(options)
 
-  const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.sender.login, api, logger)
+  const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.pull_request.user.login, api, logger)
   const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
 
   return {
