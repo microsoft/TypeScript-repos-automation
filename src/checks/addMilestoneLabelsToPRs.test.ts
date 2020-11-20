@@ -93,4 +93,15 @@ describe(addMilestoneLabelsToPRs, () => {
       labels: ["For Milestone Bug"],
     })
   })
+  it("Doesn't do anything for closed PRs", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
+
+    const pr = getPRFixture("closed")
+    pr.pull_request.body = `fixes #1123`
+
+    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
+
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
+  })
 })

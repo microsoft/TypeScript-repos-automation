@@ -9,6 +9,10 @@ import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
 export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
   const { repository: repo, pull_request } = payload
 
+  if(pull_request.state === "closed") {
+    return logger.info(`Skipping because the pull request is already closed.`)
+  }
+
   const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
 
   const houseKeepingLabels = {
