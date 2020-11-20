@@ -28,14 +28,15 @@ describe(addLabelForTeamMember, () => {
     const info = createPRInfo({ authorIsMemberOfTSTeam: false })
     await addLabelForTeamMember(api, getPRFixture("opened"), getFakeLogger(), info)
 
-    expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled()
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
   })
+
   it("Does not label a closed PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
 
     const info = createPRInfo({ authorIsMemberOfTSTeam: true })
     await addLabelForTeamMember(api, getPRFixture("closed"), getFakeLogger(), info)
 
-    expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled()
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
   })
 })

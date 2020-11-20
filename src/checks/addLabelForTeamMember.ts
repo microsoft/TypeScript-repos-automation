@@ -13,7 +13,7 @@ export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloa
   if (!info.authorIsMemberOfTSTeam) {
     return logger.info(`Skipping because ${pull_request.user.login} is not a member of the TS team.`)
   }
-  if(pull_request.state === "closed") {
+  if (pull_request.state === "closed") {
     return logger.info(`Skipping because the pull request is already closed.`)
   }
 
