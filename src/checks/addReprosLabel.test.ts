@@ -23,6 +23,7 @@ describe(addReprosLabelOnIssue, () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueFixture("opened")
     payload.issue.body = "```ts repro"
+    payload.issue.labels = [{ name: "Bug" } as any]
 
     await addReprosLabelOnIssue(api, payload, getFakeLogger())
 
@@ -58,10 +59,22 @@ describe(addReprosLabelOnComments, () => {
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })
 
-  it("Adds the label when it has a repro in the body ", async () => {
+  it("NO-OPs when there are no labels already ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueCommentFixture("created")
     payload.comment.body = "```ts repro"
+    payload.action = "closed"
+
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
+
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
+  })
+
+  it("Adds the label when it has a repro in the body and there are labels already", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    const payload = getIssueCommentFixture("created")
+    payload.comment.body = "```ts repro"
+    payload.issue.labels = [{ name: "Bug" } as any]
 
     await addReprosLabelOnComments(api, payload, getFakeLogger())
 
