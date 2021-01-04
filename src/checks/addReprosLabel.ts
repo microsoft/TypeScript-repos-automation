@@ -47,6 +47,9 @@ export const addReprosLabelOnIssue = async (api: Octokit, payload: WebhookPayloa
     if (issue.labels.find(l => l.name === "Repro Requested")) {
       await api.issues.removeLabel({ ...thisIssue, name: "Repro Requested" })
     }
+
+    // Trigger a run of all repros
+    api.repos.createDispatchEvent({ ...thisIssue, event_type: "run-twoslash-repros" })
   }
 }
 
@@ -88,5 +91,8 @@ export const addReprosLabelOnComments = async (
     if (issue.labels.find(l => l.name === "Repro Requested")) {
       await api.issues.removeLabel({ ...thisIssue, name: "Repro Requested" })
     }
+
+    // Trigger a run of all repros
+    api.repos.createDispatchEvent({ ...thisIssue, event_type: "run-twoslash-repros" })
   }
 }

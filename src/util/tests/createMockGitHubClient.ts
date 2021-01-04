@@ -25,6 +25,7 @@ export const createMockGitHubClient = () => {
       checkCollaborator: jest.fn(),
       getContents: jest.fn(),
       getCombinedStatusForRef: jest.fn(),
+      createDispatchEvent: jest.fn()
     },
     issues: {
       addAssignees: jest.fn(),
@@ -82,6 +83,7 @@ export const createFakeGitHubClient = () => {
       checkCollaborator: Promise.resolve({}),
       getContents: Promise.resolve({}),
       getCombinedStatusForRef: Promise.resolve({}),
+      createDispatchEvent: Promise.resolve({}),
     },
     issues: {
       addAssignees: Promise.resolve({}),
