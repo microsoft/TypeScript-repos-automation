@@ -56,7 +56,8 @@ describe(addReprosLabelOnComments, () => {
 
     await addReprosLabelOnComments(api, payload, getFakeLogger())
 
-    expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
+    expect(mockAPI.repos.createDispatchEvent).not.toHaveBeenCalled()
   })
 
   it("NO-OPs when there are no labels already ", async () => {
@@ -68,6 +69,7 @@ describe(addReprosLabelOnComments, () => {
     await addReprosLabelOnComments(api, payload, getFakeLogger())
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
+    expect(mockAPI.repos.createDispatchEvent).not.toHaveBeenCalled()
   })
 
   it("Adds the label when it has a repro in the body and there are labels already", async () => {
@@ -84,6 +86,7 @@ describe(addReprosLabelOnComments, () => {
       owner: "microsoft",
       repo: "TypeScript-Website",
     })
+    expect(mockAPI.repos.createDispatchEvent).toHaveBeenCalled()
     expect(pingDiscord).toHaveBeenCalled()
   })
 
