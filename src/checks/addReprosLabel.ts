@@ -66,6 +66,10 @@ export const addReprosLabelOnComments = async (
     return logger.info("Skipping because this cannot change repro state")
   }
 
+  if (payload.issue.labels.length === 0) { 
+    return logger.info("Skipping because we don't want to add the label until it's been triaged")
+  }
+
   const { repository: repo, comment, issue } = payload
   const hasReproLabel = !!issue.labels.find(l => l.name === "Has Repro")
 
