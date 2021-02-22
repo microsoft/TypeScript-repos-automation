@@ -117,4 +117,15 @@ describe(addReprosLabelOnComments, () => {
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
   })
+
+  it("NOOPs when there are no labels ", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    const payload = getIssueCommentFixture("created")
+    payload.issue.labels = []
+    payload.comment.body = "```ts repro"
+
+    await addReprosLabelOnComments(api, payload, getFakeLogger())
+
+    expect(mockAPI.issues.addLabels).not.toHaveBeenCalledWith()
+  })
 })
