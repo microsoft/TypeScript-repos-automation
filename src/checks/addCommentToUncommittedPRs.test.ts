@@ -25,6 +25,18 @@ describe(addCommentToUncommittedPRs, () => {
     expect(mockAPI.issues.removeLabel).not.toHaveBeenCalled()
   })
 
+  it("does not adds a comment to an uncommented, unlinked PR posted by typescript-bot", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.issues.listComments.mockResolvedValue({ data: [] })
+    const pr = getPRFixture("opened")
+    pr.pull_request.user.login = "typescript-bot"
+
+    const info = createPRInfo({ authorIsTypescriptBot: true })
+    await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
+
+    expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
+  })
+
   it("Adds a comment to an uncommented PR linked to uncommitted suggestion", async () => {
     const { mockAPI, api } = createMockGitHubClient()
 

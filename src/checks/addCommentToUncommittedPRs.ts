@@ -7,7 +7,7 @@ import type { PRInfo } from "../anyRepoHandlePullRequest"
  * Comment on new PRs that don't have linked issues, or link to uncommitted issues.
  */
 export const addCommentToUncommittedPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger, info: PRInfo) => {
-  if (payload.pull_request.merged || payload.pull_request.draft || info.authorIsMemberOfTSTeam) {
+  if (payload.pull_request.merged || payload.pull_request.draft || info.authorIsMemberOfTSTeam || info.authorIsTypescriptBot) {
     return logger("Skipping") 
   }
 
