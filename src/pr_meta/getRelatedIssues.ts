@@ -41,10 +41,12 @@ export const findIssuesInBody = (body: string) => {
 
 export const constrainIssuesToBaseRepo = (issues: string[], baseRepo: string): string[] => {
   const lowBase = baseRepo.toLowerCase()
+  const lowUrl = `https://github.com/${lowBase}/issues/`
   return issues
     .map(r => {
       if (r.startsWith("#")) return r.slice(1)
       if (r.startsWith(lowBase)) return r.slice(lowBase.length + 1)
+      if (r.startsWith(lowUrl)) return r.slice(lowUrl.length)
       return undefined
     })
     .filter(Boolean) as string[]
