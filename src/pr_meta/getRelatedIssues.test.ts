@@ -8,6 +8,7 @@ fix Microsoft/TypeScript#3
  closes: Microsoft/TypeScript#4 ok then
 
  Fixes: #5
+fixes https://github.com/microsoft/TypeScript/issues/6
 `
 
   const result = findIssuesInBody(body)
@@ -18,6 +19,7 @@ fix Microsoft/TypeScript#3
       "microsoft/typescript#4",
       "microsoft/typescript#3",
       "#5",
+      "https://github.com/microsoft/typescript/issues/6",
     ]
   `)
 })
@@ -27,6 +29,7 @@ it("pulls out issues", () => {
 resolve #1
 fix Microsoft/TypeScript#3
  closes: orta/TypeScript#4 ok then
+fixes https://github.com/microsoft/TypeScript/issues/6
 `
 
   const allResults = findIssuesInBody(body)
@@ -34,6 +37,7 @@ fix Microsoft/TypeScript#3
   expect(constrainedResults).toMatchInlineSnapshot(`
     Array [
       "3",
+      "6",
       "1",
     ]
   `)
