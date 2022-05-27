@@ -3,28 +3,6 @@ import { Octokit } from "@octokit/rest"
 import { Logger } from "@azure/functions"
 import fetch from "node-fetch"
 
-/**
- * Ping the discord channel when the label "Repro Requested" is added to an issue
- */
-export const pingDiscordForReproRequests = async (api: Octokit, payload: WebhookPayloadIssues, logger: Logger) => {
-  const { issue } = payload
-
-  const label = (payload as any).label
-  if (label && label.name && label.name === "Repro Requested") {
-    
-    // https://discord.com/developers/docs/resources/webhook#execute-webhook
-    const body = stripBody(issue.body)
-
-    logger.info("Sending Discord ping")
-    await pingDiscord(`Repro requested on #${issue.number}`, {
-      number: issue.number,
-      title: issue.title,
-      body: body,
-      url: issue.html_url,
-    })
-  }
-}
-
 export const pingDiscord = async (msg: string, config: { number: number; title: string; body: string; url: string }) => {
   if (!process.env.REPRO_REQUEST_DISCORD_WEBHOOK) throw new Error("No process var for REPRO_REQUEST_DISCORD_WEBHOOK")
 
