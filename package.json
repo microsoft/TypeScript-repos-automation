@@ -18,9 +18,7 @@
     "@azure/functions": "^1.0.2-beta2",
     "@octokit/rest": "^16.35.0",
     "@octokit/webhooks": "^6.3.2",
-    "@types/minimatch": "^3.0.3",
-    "minimatch": "^3.0.4",
-    "node-fetch": "^2.6.0",
+    "minimatch": "^9.0.4",
     "parse-diff": "^0.6.0"
   },
   "devDependencies": {
