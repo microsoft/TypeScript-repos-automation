@@ -1,4 +1,4 @@
-import * as parseDiff from "parse-diff"
+import parseDiff from "parse-diff"
 import { Octokit } from "@octokit/rest"
 import { Context } from "@azure/functions"
 import { getCodeOwners, findMatchingOwners } from "./getCodeOwners"
