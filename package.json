@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=18"
   },
+  "main": "dist/functions/*.js",
   "scripts": {
     "build": "tsc",
     "postinstall": "node scripts/printSHA.js",
