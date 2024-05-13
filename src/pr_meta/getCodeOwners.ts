@@ -9,7 +9,7 @@ import { Octokit } from "@octokit/rest"
 type CodeOwners = { [path: string]: string[] }
 
 export const getCodeOwners = async (api: Octokit) => {
-  const allCodeOwnersResponse = await api.repos.getContents({
+  const allCodeOwnersResponse = await api.repos.getContent({
     owner: "DefinitelyTyped",
     repo: "DefinitelyTyped",
     path: ".github/CODEOWNERS",

@@ -5,7 +5,7 @@ import { addLabelForTeamMember } from "./checks/addLabelForTeamMember"
 import { assignTeamMemberForRelatedPR } from "./checks/assignTeamMemberForRelatedPR"
 import { addMilestoneLabelsToPRs } from "./checks/addMilestoneLabelsToPRs"
 import { addCommentToUncommittedPRs } from "./checks/addCommentToUncommittedPRs"
-import { Octokit } from "@octokit/rest"
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 import { sha } from "./sha"
 import { isMemberOfTSTeam } from "./pr_meta/isMemberOfTSTeam"
 import { getRelatedIssues } from "./pr_meta/getRelatedIssues"
@@ -43,9 +43,8 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
   }
 }
 
-export type UnPromise<T> = T extends Promise<infer U> ? U : T
 // The return type of generatePRInfo
-export type PRInfo = UnPromise<ReturnType<typeof generatePRInfo>>
+export type PRInfo = Awaited<ReturnType<typeof generatePRInfo>>
 
 const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
@@ -57,7 +56,7 @@ const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: L
   }
   
   const options = api.issues.listComments.endpoint.merge(thisIssue)
-  const comments: Octokit.IssuesListCommentsResponse = await api.paginate(options)
+  const comments: RestEndpointMethodTypes["issues"]["listComments"]["response"]["data"] = await api.paginate(options)
 
   const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.pull_request.user.login, api, logger)
   const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)

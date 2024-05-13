@@ -23,7 +23,7 @@ export const createMockGitHubClient = () => {
   const mockAPI = {
     repos: {
       checkCollaborator: jest.fn(),
-      getContents: jest.fn(),
+      getContent: jest.fn(),
       getCombinedStatusForRef: jest.fn(),
       createDispatchEvent: jest.fn()
     },
@@ -53,7 +53,7 @@ export const createMockGitHubClient = () => {
       getMembership: jest.fn(),
     },
     search: {
-      issues: jest.fn(),
+      issuesAndPullRequests: jest.fn(),
     },
     paginate: jest.fn(),
   }
@@ -81,7 +81,7 @@ export const createFakeGitHubClient = () => {
   const fake: PromisifiedInferredJestObj = {
     repos: {
       checkCollaborator: Promise.resolve({}),
-      getContents: Promise.resolve({}),
+      getContent: Promise.resolve({}),
       getCombinedStatusForRef: Promise.resolve({}),
       createDispatchEvent: Promise.resolve({}),
     },
@@ -107,7 +107,7 @@ export const createFakeGitHubClient = () => {
       getMembership: Promise.resolve({ status: 200 }),
     },
     search: {
-      issues: Promise.resolve({}),
+      issuesAndPullRequests: Promise.resolve({}),
     },
     paginate: Promise.resolve({}) as any,
   }

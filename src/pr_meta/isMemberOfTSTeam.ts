@@ -10,7 +10,7 @@ export const isMemberOfTSTeam = async (username: string, api: Octokit, _log: Log
     return cachedTSTeam.includes(username)
   }
 
-  const contentResponse = await api.repos.getContents({
+  const contentResponse = await api.repos.getContent({
     path: ".github/pr_owners.txt",
     repo: "TypeScript",
     owner: "Microsoft",

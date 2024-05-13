@@ -1,5 +1,5 @@
 import { IssueCommentEvent } from "@octokit/webhooks-types"
-import { Octokit } from "@octokit/rest"
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR"
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
 import { Logger } from "../util/logger"
@@ -15,7 +15,7 @@ export const mergeThroughCodeOwners = async (api: Octokit, payload: IssueComment
   }
 
   // Grab the correlating PR
-  let pull: Octokit.Response<Octokit.PullsGetResponse>["data"]
+  let pull: RestEndpointMethodTypes["pulls"]["get"]["response"]["data"]
 
   try {
     const response = await api.pulls.get({
@@ -36,7 +36,7 @@ export const mergeThroughCodeOwners = async (api: Octokit, payload: IssueComment
   logger.info("Looks good to merge")
   await mergeOrAddMergeLabel(
     api,
-    { number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login },
+    { pull_number: pull.number, repo: pull.base.repo.name, owner: pull.base.repo.owner.login },
     pull.head.sha,
     logger
   )

@@ -4,7 +4,7 @@ import { Logger } from "../util/logger"
 type PullMeta = {
   repo: string
   owner: string
-  number: number
+  pull_number: number
 }
 
 export const mergeOrAddMergeLabel = async (api: Octokit, pullMeta: PullMeta, headCommitSHA: string, logger: Logger) => {
@@ -18,6 +18,6 @@ export const mergeOrAddMergeLabel = async (api: Octokit, pullMeta: PullMeta, hea
   } else {
     logger.trace("Adding Merge on Green")
     // Merge when green
-    await api.issues.addLabels({ ...pullMeta, labels: ["Merge on Green"] })
+    await api.issues.addLabels({ ...pullMeta, labels: ["Merge on Green"], issue_number: pullMeta.pull_number })
   }
 }

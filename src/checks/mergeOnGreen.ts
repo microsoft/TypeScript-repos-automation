@@ -16,22 +16,25 @@ export const mergeOnGreen = async (api: Octokit, payload: StatusEvent, logger: L
   const repo = payload.repository.name
 
   const status =  await api.checks.listForRef({ owner, repo, ref: payload.commit.sha })
-  if (status.data.check_runs.every(c => c.conclusion !== "SUCCESS")) {
+  if (status.data.check_runs.every(c => c.conclusion !== "success")) {
     return logger.info("Not all statuses are green")
   }
 
   // See https://github.com/maintainers/early-access-feedback/issues/114 for more context on getting a PR from a SHA
   const repoString = payload.repository.full_name
-  const searchResponse = await api.search.issues({ q: `${payload.commit.sha} type:pr is:open repo:${repoString}` })
+  const searchResponse = await api.search.issuesAndPullRequests({ q: `${payload.commit.sha} type:pr is:open repo:${repoString}` })
 
   // https://developer.github.com/v3/search/#search-issues
   const prsWithCommit = searchResponse.data.items.map((i: any) => i.number) as number[]
   for (const number of prsWithCommit) {
     // Get the PR labels
-    const issue = await api.issues.get({ owner, repo, number })
+    const issue = await api.issues.get({ owner, repo, issue_number: number })
 
     // Get the PR combined status
-    const mergeLabel = issue.data.labels.find(l => l.name.toLowerCase() === "merge on green")
+    const mergeLabel = issue.data.labels.find(l => {
+      const name = typeof l === "string" ? l : l.name;
+      return name?.toLowerCase() === "merge on green"
+    })
     if (!mergeLabel) {
       return logger.info(`PR ${number} does not have Merge on Green`)
     } else {
@@ -47,7 +50,7 @@ export const mergeOnGreen = async (api: Octokit, payload: StatusEvent, logger: L
     }
 
     // Merge the PR
-    await api.pulls.merge({ owner, repo, number, commit_title: commitTitle })
+    await api.pulls.merge({ owner, repo, pull_number: number, commit_title: commitTitle })
     logger.info(`Merged Pull Request ${number}`)
   }
 }

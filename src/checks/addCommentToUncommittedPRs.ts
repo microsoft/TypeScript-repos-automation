@@ -14,7 +14,7 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequ
 
   if (!info.relatedIssues || info.relatedIssues.length === 0) {
     const message = "This PR doesn't have any linked issues. Please open an issue that references this PR. From there we can discuss and prioritise."
-    const needsComment = !info.comments || !info.comments.find(c => c.body.startsWith(message.slice(0, 25)))
+    const needsComment = !info.comments || !info.comments.find(c => c.body?.startsWith(message.slice(0, 25)))
     if (needsComment) {
       await api.issues.createComment({
         ...info.thisIssue,
@@ -23,12 +23,18 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequ
     }
   }
   else {
-    const isSuggestion = info.relatedIssues.some(issue => issue.labels?.find(l => l.name === "Suggestion"))
-    const isCommitted = info.relatedIssues.some(issue => issue.labels?.find(l => l.name === "Committed" || l.name === "Experience Enhancement" || l.name === "help wanted"))
+    const isSuggestion = info.relatedIssues.some(issue => issue.labels?.find(l => {
+      const name = typeof l === "string" ? l : l.name;
+      return name === "Suggestion"
+    }))
+    const isCommitted = info.relatedIssues.some(issue => issue.labels?.find(l => {
+      const name = typeof l === "string" ? l : l.name;
+      return name === "Committed" || name === "Experience Enhancement" || name === "help wanted"
+    }))
 
     if (isSuggestion && !isCommitted) {
       const message = `The TypeScript team hasn't accepted the linked issue #${info.relatedIssues[0].number}. If you can get it accepted, this PR will have a better chance of being reviewed.`
-      const needsComment = !info.comments || !info.comments.find(c => c.body.startsWith(message.slice(0, 25)))
+      const needsComment = !info.comments || !info.comments.find(c => c.body?.startsWith(message.slice(0, 25)))
       if (needsComment) {
         await api.issues.createComment({
           ...info.thisIssue,

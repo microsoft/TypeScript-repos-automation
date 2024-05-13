@@ -1,9 +1,9 @@
 import parseDiff from "parse-diff"
-import { Octokit } from "@octokit/rest"
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 import { InvocationContext } from "@azure/functions"
 import { getCodeOwners, findMatchingOwners } from "./getCodeOwners"
 
-type PullRequest = import("@octokit/rest").Octokit.PullsGetResponse
+type PullRequest = RestEndpointMethodTypes["pulls"]["get"]["response"]["data"];
 
 /** The context around which you can make decisions  */
 export interface PRFilesContext {

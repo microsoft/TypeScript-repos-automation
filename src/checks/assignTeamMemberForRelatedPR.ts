@@ -19,7 +19,7 @@ export const assignTeamMemberForRelatedPR = async (api: Octokit, payload: PullRe
 
   const assignees: string[] = []
   for (const issue of relatedIssues) {
-    for (const issueAssignee of issue.assignees) {
+    for (const issueAssignee of issue.assignees ?? []) {
         assignees.push(issueAssignee.login)
     }
   }

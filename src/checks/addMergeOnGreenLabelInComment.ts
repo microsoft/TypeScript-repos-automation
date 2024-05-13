@@ -39,7 +39,7 @@ export const addLabelForTeamMember = async (
     const response = await api.issues.get({
       owner: repo.owner.login,
       repo: repo.name,
-      number: payload.pull_request.number,
+      issue_number: payload.pull_request.number,
     })
 
     issue = response.data as any
@@ -75,7 +75,7 @@ export const addLabelForTeamMember = async (
   const repo = {
     owner: org,
     repo: payload.repository.name,
-    number: issue.number,
+    pull_number: issue.number,
   }
 
   // Need to get the sha for auto-merging
