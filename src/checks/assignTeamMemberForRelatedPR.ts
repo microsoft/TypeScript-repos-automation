@@ -1,7 +1,7 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { Logger } from "../util/logger"
 
 /**
  * If a community PR comes in with a 'fixes #43' and 43 is assigned to a team member, then assign that PR

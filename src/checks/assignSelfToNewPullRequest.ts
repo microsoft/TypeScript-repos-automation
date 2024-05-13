@@ -1,7 +1,7 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
-import { Logger } from "@azure/functions"
+import { Logger } from "../util/logger"
 
 /**
  * If the PR comes from a core contributor, set themselves to be the assignee

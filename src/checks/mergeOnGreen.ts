@@ -1,6 +1,6 @@
 import { WebhookPayloadStatus } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
+import { Logger } from "../util/logger"
 
 /**
  * If the PR comes from a core contributor, set themselves to be the assignee

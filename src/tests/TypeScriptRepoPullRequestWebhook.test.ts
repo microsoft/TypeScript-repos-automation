@@ -3,29 +3,30 @@ jest.mock("../anyRepoHandleStatusUpdate", () => ({ anyRepoHandleStatusUpdate: je
 jest.mock("../anyRepoHandleIssueComment", () => ({ anyRepoHandleIssueCommentPayload: jest.fn() }))
 jest.mock("../anyRepoHandleIssue", () => ({ handleIssuePayload: jest.fn() }))
 
-import webhook from "../../TypeScriptRepoPullRequestWebhook/index"
+import webhook from "../../functions/TypeScriptRepoPullRequestWebhook"
 import { handlePullRequestPayload } from "../anyRepoHandlePullRequest"
 import { anyRepoHandleStatusUpdate } from "../anyRepoHandleStatusUpdate"
 import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment"
 import { handleIssuePayload } from "../anyRepoHandleIssue"
+import { HttpRequest, InvocationContext } from "@azure/functions"
 
-it("calls handle PR from the webhook main", () => {
+it("calls handle PR from the webhook main", async () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" } } as any, { body: "{}", headers: { "x-github-event": "pull_request" } })
+  await webhook(new HttpRequest({ method: "POST", url: "https://example.org", body: { string: "{}" }, headers: { "x-github-event": "pull_request" } }), new InvocationContext({ logHandler: () => "" }))
 
   expect(handlePullRequestPayload).toHaveBeenCalled()
 })
 
-it("calls handle status from the webhook main", () => {
+it("calls handle status from the webhook main", async () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" } } as any, { body: "{}", headers: { "x-github-event": "status" } })
+  await webhook(new HttpRequest({ method: "POST", url: "https://example.org", body: { string: "{}" }, headers: { "x-github-event": "status" } }), new InvocationContext({ logHandler: () => "" }))
 
   expect(anyRepoHandleStatusUpdate).toHaveBeenCalled()
 })
 
-it("calls handle comments from the webhook main", () => {
+it("calls handle comments from the webhook main", async () => {
   process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  webhook({ log: { info: () => "" } } as any, { body: "{}", headers: { "x-github-event": "issue_comment" } })
+  await webhook(new HttpRequest({ method: "POST", url: "https://example.org", body: { string: "{}" }, headers: { "x-github-event": "issue_comment" } }), new InvocationContext({ logHandler: () => "" }))
 
   expect(anyRepoHandleIssueCommentPayload).toHaveBeenCalled()
 })

@@ -1,6 +1,5 @@
 import { WebhookPayloadIssues } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import fetch from "node-fetch"
 
 export const pingDiscord = async (msg: string, config: { number: number; title: string; body: string; url: string }) => {

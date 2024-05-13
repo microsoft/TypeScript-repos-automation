@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest"
-import type { Logger } from "@azure/functions"
+import { Logger } from "../util/logger"
 let cachedTSTeam: string[] = []
 
 /** Checks if someone is a member of a team, and always bails with TS bot */

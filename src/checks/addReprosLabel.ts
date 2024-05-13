@@ -1,8 +1,8 @@
 import { WebhookPayloadIssueComment, WebhookPayloadIssues } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 
 import { pingDiscord, stripBody } from "./pingDiscordForReproRequests"
+import { Logger } from "../util/logger"
 
 const checkForRepro = (toCheck: { body: string }) => {
   const codeblocks = ["```ts repro", "```tsx repro", "```js repro", "```jsx repro"]

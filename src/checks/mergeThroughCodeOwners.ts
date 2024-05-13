@@ -1,8 +1,8 @@
 import { WebhookPayloadIssueComment } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR"
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
+import { Logger } from "../util/logger"
 
 export const mergePhrase = "ready to merge"
 

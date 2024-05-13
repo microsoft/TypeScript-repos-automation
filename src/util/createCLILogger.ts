@@ -1,12 +1,13 @@
-import { Logger } from "@azure/functions"
+import { Logger } from "./logger"
 
-const cliLogger = (...args: any[]) => {
-  console.log(args)
+const cliLogger: Logger = {
+  log: console.log,
+  trace: console.trace,
+  debug: console.debug,
+  info: console.info,
+  warn: console.warn,
+  error: console.error
 }
-cliLogger.error = console.error
-cliLogger.warn = console.warn
-cliLogger.info = console.info
-cliLogger.verbose = console.info
 
 /** Returns a logger which conforms to the Azure logger interface */
 export const createCLILogger = (): Logger => cliLogger

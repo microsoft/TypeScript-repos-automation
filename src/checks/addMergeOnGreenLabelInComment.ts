@@ -5,8 +5,8 @@ import {
 } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
-import type { Logger } from "@azure/functions"
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
+import { Logger } from "../util/logger"
 
 /**
  * If the PR comes from a core contributor, add a label to indicate it came from a maintainer

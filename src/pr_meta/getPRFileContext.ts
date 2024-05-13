@@ -1,6 +1,6 @@
 import parseDiff from "parse-diff"
 import { Octokit } from "@octokit/rest"
-import { Context } from "@azure/functions"
+import { InvocationContext } from "@azure/functions"
 import { getCodeOwners, findMatchingOwners } from "./getCodeOwners"
 
 type PullRequest = import("@octokit/rest").Octokit.PullsGetResponse
@@ -25,7 +25,7 @@ export interface PRFilesContext {
 export const getPRFileContext = async (
   api: Octokit,
   prNumber: number,
-  context: Context
+  context: InvocationContext
 ): Promise<PRFilesContext | undefined> => {
   const thisPR = { owner: "DefinitelyTyped", repo: "DefinitelyTyped", pull_number: prNumber }
   const diffHeaders = { accept: "application/vnd.github.v3.diff" }
@@ -35,7 +35,7 @@ export const getPRFileContext = async (
   const diffString = (diffResponse.data as unknown) as string
 
   if (diffString === undefined) {
-    context.log.error(`Could not get a diff for PR ${prNumber}`)
+    context.error(`Could not get a diff for PR ${prNumber}`)
     return undefined
   }
 

@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { getContents } from "../util/getContents"
 import { minimatch } from "minimatch"
+import { Logger } from "../util/logger"
 
 type PR = Octokit.Response<Octokit.PullsGetResponse>["data"]
 

@@ -1,7 +1,7 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import type { Logger } from "@azure/functions"
 import type { PRInfo } from "../anyRepoHandlePullRequest"
+import { Logger } from "../util/logger"
 
 /**
  * If the PR comes from a core contributor, add a label to indicate it came from a maintainer

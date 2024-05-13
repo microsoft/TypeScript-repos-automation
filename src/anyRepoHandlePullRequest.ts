@@ -1,5 +1,4 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks"
-import { Context, Logger } from "@azure/functions"
 import { createGitHubClient } from "./util/createGitHubClient"
 import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest"
 import { addLabelForTeamMember } from "./checks/addLabelForTeamMember"
@@ -10,8 +9,10 @@ import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 import { isMemberOfTSTeam } from "./pr_meta/isMemberOfTSTeam"
 import { getRelatedIssues } from "./pr_meta/getRelatedIssues"
+import { HttpResponseInit, InvocationContext } from "@azure/functions"
+import { Logger } from "./util/logger"
 
-export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: Context) => {
+export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()
   const ran = [] as string[]
 
@@ -20,13 +21,13 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
     fn: (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger, pr: PRInfo) => Promise<void>,
     pr: PRInfo
   ) => {
-    context.log.info(`\n\n## ${name}\n`)
+    context.info(`\n\n## ${name}\n`)
     ran.push(name)
-    return fn(api, payload, context.log, pr)
+    return fn(api, payload, context, pr)
   }
 
   if (payload.repository.name === "TypeScript") {
-    const pr = await generatePRInfo(api, payload, context.log)
+    const pr = await generatePRInfo(api, payload, context)
 
     await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
     await run("Add a core team label to PRs", addLabelForTeamMember, pr)
@@ -35,7 +36,7 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
     await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs, pr)
   }
 
-  context.res = {
+  return {
     status: 200,
     headers: { sha: sha },
     body: ran.length ? `PR success, ran: ${ran.join(", ")}`: "Success, NOOP",

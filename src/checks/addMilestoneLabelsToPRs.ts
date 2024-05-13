@@ -1,7 +1,7 @@
 import { WebhookPayloadPullRequest } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { Logger } from "../util/logger"
 
 /**
  * Keep track of the milestone related PRs which are based on linked issues in the PR body

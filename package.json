@@ -15,9 +15,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@azure/functions": "^1.0.2-beta2",
+    "@azure/functions": "^4.4.0",
     "@octokit/rest": "^16.35.0",
     "@octokit/webhooks": "^6.3.2",
+    "@octokit/webhooks-methods": "^4.1.0",
     "minimatch": "^9.0.4",
     "parse-diff": "^0.11.1"
   },

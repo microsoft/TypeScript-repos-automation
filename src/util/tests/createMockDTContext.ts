@@ -1,7 +1,7 @@
 import { PRFilesContext, getPRFileContext } from "../../pr_meta/getPRFileContext"
-import { Context } from "@azure/functions"
 import { createMockGitHubClient, getPRFixture, convertToOctokitAPI } from "./createMockGitHubClient"
 import { createMockContext } from "./createMockContext"
+import { InvocationContext } from "@azure/functions"
 
 /**
  * Creates a version of the DT context object, with an API which lets you override any
@@ -25,7 +25,7 @@ import { createMockContext } from "./createMockContext"
  */
 export const createMockPRFileContext = async (
   api: import("@octokit/rest").Octokit,
-  context: Context,
+  context: InvocationContext,
   overrides: Partial<PRFilesContext>
 ) => {
   const defaultCodeowners = `
