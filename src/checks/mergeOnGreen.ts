@@ -1,4 +1,4 @@
-import { WebhookPayloadStatus } from "@octokit/webhooks"
+import { StatusEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
 import { Logger } from "../util/logger"
 
@@ -6,7 +6,7 @@ import { Logger } from "../util/logger"
  * If the PR comes from a core contributor, set themselves to be the assignee
  * if one isn't set during the creation of the PR.
  */
-export const mergeOnGreen = async (api: Octokit, payload: WebhookPayloadStatus, logger: Logger) => {
+export const mergeOnGreen = async (api: Octokit, payload: StatusEvent, logger: Logger) => {
   if (payload.state !== "success") {
     return logger.info(`Not a successful state - got ${payload.state}`)
   }

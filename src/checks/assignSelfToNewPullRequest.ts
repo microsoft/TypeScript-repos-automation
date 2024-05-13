@@ -1,4 +1,4 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
 import { Logger } from "../util/logger"
@@ -7,7 +7,7 @@ import { Logger } from "../util/logger"
  * If the PR comes from a core contributor, set themselves to be the assignee
  * if one isn't set during the creation of the PR.
  */
-export const assignSelfToNewPullRequest = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
+export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
   if (pull_request.assignees.length > 0) {
     return logger.info("Skipping because there are assignees already")

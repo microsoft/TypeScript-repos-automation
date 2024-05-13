@@ -1,4 +1,4 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
 import { Logger } from "../util/logger"
@@ -6,14 +6,14 @@ import { Logger } from "../util/logger"
 /**
  * Keep track of the milestone related PRs which are based on linked issues in the PR body
  */
-export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
+export const addMilestoneLabelsToPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
 
   if (pull_request.state === "closed") {
     return logger.info(`Skipping because the pull request is already closed.`)
   }
 
-  const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
+  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
 
   const houseKeepingLabels = {
     "For Milestone Bug": false,

@@ -5,6 +5,7 @@ import { addCommentToUncommittedPRs } from "./addCommentToUncommittedPRs"
 import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
 import { createPRInfo } from "../util/tests/createPRInfo"
+import { Label } from "@octokit/webhooks-types"
 
 describe(addCommentToUncommittedPRs, () => {
   it("Adds a comment to an uncommented, unlinked PR", async () => {
@@ -85,7 +86,7 @@ describe(addCommentToUncommittedPRs, () => {
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
-    pr.pull_request.labels = [{ name: "For Backlog Bug" }]
+    pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
 
     const info = createPRInfo({ 
       comments: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] as any,

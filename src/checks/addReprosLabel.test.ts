@@ -52,7 +52,7 @@ describe(addReprosLabelOnComments, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueCommentFixture("created")
-    payload.action = "closed"
+    payload.action = "deleted"
 
     await addReprosLabelOnComments(api, payload, getFakeLogger())
 
@@ -64,7 +64,7 @@ describe(addReprosLabelOnComments, () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getIssueCommentFixture("created")
     payload.comment.body = "```ts repro"
-    payload.action = "closed"
+    payload.action = "deleted"
 
     await addReprosLabelOnComments(api, payload, getFakeLogger())
 

@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest"
 import { readFileSync } from "fs"
 import { join } from "path"
-import { WebhookPayloadPullRequest, WebhookPayloadIssues, WebhookPayloadIssueComment } from "@octokit/webhooks"
+import { IssueCommentEvent, IssuesEvent, PullRequestEvent } from "@octokit/webhooks-types"
 
 /**
  * Creates a version of the GitHub API client where API calls
@@ -126,13 +126,13 @@ export const convertToOctokitAPI = (mock: {}) => {
 }
 
 /** Grabs a known PR fixture */
-export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): WebhookPayloadPullRequest =>
+export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): PullRequestEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"))
 
 /** Grabs a known issue fixture */
-export const getIssueFixture = (fixture: "opened" | "labeled"): WebhookPayloadIssues =>
+export const getIssueFixture = (fixture: "opened" | "labeled"): IssuesEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"))
 
   /** Grabs a known issue fixture */
-export const getIssueCommentFixture = (fixture: "created"): WebhookPayloadIssueComment =>
+export const getIssueCommentFixture = (fixture: "created"): IssueCommentEvent =>
 JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issue_comments", fixture + ".json"), "utf8"))

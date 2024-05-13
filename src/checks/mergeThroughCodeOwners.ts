@@ -1,4 +1,4 @@
-import { WebhookPayloadIssueComment } from "@octokit/webhooks"
+import { IssueCommentEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
 import { hasAccessToMergePRs } from "../pr_meta/hasAccessToMergePR"
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
@@ -9,7 +9,7 @@ export const mergePhrase = "ready to merge"
 /**
  * Allow someone to declare a PR should be merged if they have access rights via code owners
  */
-export const mergeThroughCodeOwners = async (api: Octokit, payload: WebhookPayloadIssueComment, logger: Logger) => {
+export const mergeThroughCodeOwners = async (api: Octokit, payload: IssueCommentEvent, logger: Logger) => {
   if (!payload.comment.body.toLowerCase().includes(mergePhrase)) {
     return logger.info(`Issue comment did not include '${mergePhrase}', skipping merge through code owners checks`)
   }

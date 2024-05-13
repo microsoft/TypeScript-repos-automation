@@ -1,4 +1,4 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { createGitHubClient } from "./util/createGitHubClient"
 import { assignSelfToNewPullRequest } from "./checks/assignSelfToNewPullRequest"
 import { addLabelForTeamMember } from "./checks/addLabelForTeamMember"
@@ -12,13 +12,13 @@ import { getRelatedIssues } from "./pr_meta/getRelatedIssues"
 import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { Logger } from "./util/logger"
 
-export const handlePullRequestPayload = async (payload: WebhookPayloadPullRequest, context: InvocationContext): Promise<HttpResponseInit> => {
+export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()
   const ran = [] as string[]
 
   const run = (
     name: string,
-    fn: (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger, pr: PRInfo) => Promise<void>,
+    fn: (api: Octokit, payload: PullRequestEvent, logger: Logger, pr: PRInfo) => Promise<void>,
     pr: PRInfo
   ) => {
     context.info(`\n\n## ${name}\n`)
@@ -47,7 +47,7 @@ export type UnPromise<T> = T extends Promise<infer U> ? U : T
 // The return type of generatePRInfo
 export type PRInfo = UnPromise<ReturnType<typeof generatePRInfo>>
 
-const generatePRInfo = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
+const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
 
   const thisIssue = {
@@ -60,7 +60,7 @@ const generatePRInfo = async (api: Octokit, payload: WebhookPayloadPullRequest, 
   const comments: Octokit.IssuesListCommentsResponse = await api.paginate(options)
 
   const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.pull_request.user.login, api, logger)
-  const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
+  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
 
   return {
     thisIssue,

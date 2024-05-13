@@ -1,4 +1,3 @@
-import { WebhookPayloadIssues } from "@octokit/webhooks"
 import { Octokit } from "@octokit/rest"
 import fetch from "node-fetch"
 

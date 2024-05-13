@@ -1,8 +1,7 @@
 import {
-  WebhookPayloadPullRequest,
-  WebhookPayloadIssueComment,
-  WebhookPayloadPullRequestReview,
-} from "@octokit/webhooks"
+  IssueCommentEvent,
+  PullRequestReviewEvent,
+} from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
 import { mergeOrAddMergeLabel } from "../pr_meta/mergeOrAddMergeLabel"
@@ -13,12 +12,12 @@ import { Logger } from "../util/logger"
  */
 export const addLabelForTeamMember = async (
   api: Octokit,
-  payload: WebhookPayloadIssueComment | WebhookPayloadPullRequestReview,
+  payload: IssueCommentEvent | PullRequestReviewEvent,
   logger: Logger
 ) => {
   const org = payload.repository.owner.login
 
-  let issue: WebhookPayloadIssueComment["issue"] = null!
+  let issue: IssueCommentEvent["issue"] = null!
   let text: string = null!
   let userLogin: string = ""
   let issueNumber: number = -1

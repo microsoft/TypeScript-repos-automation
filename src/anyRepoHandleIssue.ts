@@ -1,4 +1,4 @@
-import { WebhookPayloadIssues } from "@octokit/webhooks"
+import { IssuesEvent } from "@octokit/webhooks-types"
 import { InvocationContext, HttpResponseInit } from "@azure/functions"
 import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
@@ -6,13 +6,13 @@ import { addReprosLabelOnIssue } from "./checks/addReprosLabel"
 import { createGitHubClient } from "./util/createGitHubClient"
 import { Logger } from "./util/logger"
 
-export const handleIssuePayload = async (payload: WebhookPayloadIssues, context: InvocationContext): Promise<HttpResponseInit> => {
+export const handleIssuePayload = async (payload: IssuesEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()
   const ran = [] as string[]
 
   const run = (
     name: string,
-    fn: (api: Octokit, payload: WebhookPayloadIssues, logger: Logger) => Promise<void>
+    fn: (api: Octokit, payload: IssuesEvent, logger: Logger) => Promise<void>
   ) => {
     context.info(`\n\n## ${name}\n`)
     ran.push(name)

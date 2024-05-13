@@ -5,13 +5,14 @@ import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGi
 import { getFakeLogger } from "../util/tests/createMockContext"
 
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { User } from "@octokit/webhooks-types"
 const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
 
 describe(assignTeamMemberForRelatedPR, () => {
   it("NO-OPs when there's assignees already ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const pr = getPRFixture("opened")
-    pr.pull_request.assignees = ["orta"]
+    pr.pull_request.assignees = [{ login: "orta" } as Partial<User> as User]
 
     await assignTeamMemberForRelatedPR(api, pr, getFakeLogger())
 
