@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "functions/*ts"
+  ],
+  "project": [
+    "**/*.{js,ts,tsx}"
+  ],
+  "ignore": ["dist/**", "src/util/createCLILogger.ts", "src/util/tests/**"],
+  "ignoreBinaries": ["func"],
+  "ignoreDependencies": ["@types/jest"],
+  "ignoreExportsUsedInFile": true
+}
