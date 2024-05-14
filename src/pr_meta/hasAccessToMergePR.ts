@@ -1,9 +1,9 @@
-import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 import { getContents } from "../util/getContents"
-import * as minimatch from "minimatch"
+import { minimatch } from "minimatch"
+import { Logger } from "../util/logger"
 
-type PR = Octokit.Response<Octokit.PullsGetResponse>["data"]
+type PR = RestEndpointMethodTypes["pulls"]["get"]["response"]["data"];
 
 /**
  * Checks if a user has access to merge via a comment
@@ -67,7 +67,7 @@ async function getPRChangedFiles(octokit: Octokit, webhook: PR) {
     pull_number: webhook.number,
   })
 
-  const files = await octokit.paginate(options)
+  const files = await octokit.paginate<RestEndpointMethodTypes["pulls"]["listFiles"]["response"]["data"][number]>(options)
   const fileStrings = files.map(f => `/${f.filename}`)
   return fileStrings
 }

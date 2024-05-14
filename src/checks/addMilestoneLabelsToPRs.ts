@@ -1,19 +1,19 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { Logger } from "../util/logger"
 
 /**
  * Keep track of the milestone related PRs which are based on linked issues in the PR body
  */
-export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
+export const addMilestoneLabelsToPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
 
   if (pull_request.state === "closed") {
     return logger.info(`Skipping because the pull request is already closed.`)
   }
 
-  const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
+  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
 
   const houseKeepingLabels = {
     "For Milestone Bug": false,
@@ -31,7 +31,7 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayl
   for (const issue of relatedIssues) {
     const milestone = issue.milestone
     if (milestone) {
-      if (milestone.title !== "Backlog" || issue.assignees.length) {
+      if (milestone.title !== "Backlog" || issue.assignees?.length) {
         houseKeepingLabels["For Milestone Bug"] = true
       } else {
         houseKeepingLabels["For Backlog Bug"] = true
@@ -62,7 +62,10 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: WebhookPayl
 
   if (houseKeepingLabels["For Milestone Bug"]) {
     for (const issue of relatedIssues) {
-      if (!issue.labels.find(l => l.name === "Fix Available")) {
+      if (!issue.labels.find(l => {
+        const name = typeof l === "string" ? l : l.name;
+        return name === "Fix Available"
+      })) {
         await api.issues.addLabels({ ...thisIssue, issue_number: issue.number, labels: ["Fix Available"] })
       }
     }

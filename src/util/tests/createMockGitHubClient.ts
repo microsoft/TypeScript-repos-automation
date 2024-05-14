@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest"
 import { readFileSync } from "fs"
 import { join } from "path"
-import { WebhookPayloadPullRequest, WebhookPayloadIssues, WebhookPayloadIssueComment } from "@octokit/webhooks"
+import { IssueCommentEvent, IssuesEvent, PullRequestEvent } from "@octokit/webhooks-types"
 
 /**
  * Creates a version of the GitHub API client where API calls
@@ -23,7 +23,7 @@ export const createMockGitHubClient = () => {
   const mockAPI = {
     repos: {
       checkCollaborator: jest.fn(),
-      getContents: jest.fn(),
+      getContent: jest.fn(),
       getCombinedStatusForRef: jest.fn(),
       createDispatchEvent: jest.fn()
     },
@@ -53,7 +53,7 @@ export const createMockGitHubClient = () => {
       getMembership: jest.fn(),
     },
     search: {
-      issues: jest.fn(),
+      issuesAndPullRequests: jest.fn(),
     },
     paginate: jest.fn(),
   }
@@ -81,7 +81,7 @@ export const createFakeGitHubClient = () => {
   const fake: PromisifiedInferredJestObj = {
     repos: {
       checkCollaborator: Promise.resolve({}),
-      getContents: Promise.resolve({}),
+      getContent: Promise.resolve({}),
       getCombinedStatusForRef: Promise.resolve({}),
       createDispatchEvent: Promise.resolve({}),
     },
@@ -107,7 +107,7 @@ export const createFakeGitHubClient = () => {
       getMembership: Promise.resolve({ status: 200 }),
     },
     search: {
-      issues: Promise.resolve({}),
+      issuesAndPullRequests: Promise.resolve({}),
     },
     paginate: Promise.resolve({}) as any,
   }
@@ -126,13 +126,13 @@ export const convertToOctokitAPI = (mock: {}) => {
 }
 
 /** Grabs a known PR fixture */
-export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): WebhookPayloadPullRequest =>
+export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): PullRequestEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"))
 
 /** Grabs a known issue fixture */
-export const getIssueFixture = (fixture: "opened" | "labeled"): WebhookPayloadIssues =>
+export const getIssueFixture = (fixture: "opened" | "labeled"): IssuesEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"))
 
   /** Grabs a known issue fixture */
-export const getIssueCommentFixture = (fixture: "created"): WebhookPayloadIssueComment =>
+export const getIssueCommentFixture = (fixture: "created"): IssueCommentEvent =>
 JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issue_comments", fixture + ".json"), "utf8"))

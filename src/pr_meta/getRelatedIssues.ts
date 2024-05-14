@@ -1,4 +1,4 @@
-import { Octokit } from "@octokit/rest"
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 
 // https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords
 const closePrefixes = ["close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved"]
@@ -6,7 +6,7 @@ const closePrefixes = ["close", "closes", "closed", "fix", "fixes", "fixed", "re
 export const getRelatedIssues = async (body: string, owner: string, name: string, api: Octokit) => {
   const allFixedIssues = findIssuesInBody(body)
   const ourIssues = constrainIssuesToBaseRepo(allFixedIssues, `${owner}/${name}`)
-  const issues: import("@octokit/rest").Octokit.IssuesGetResponse[] = []
+  const issues: RestEndpointMethodTypes["issues"]["get"]["response"]["data"][] = []
 
   for (const issueNumber of ourIssues) {
     const response = await api.issues.get({ issue_number: Number(issueNumber), owner, repo: name })

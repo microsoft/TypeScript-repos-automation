@@ -33,10 +33,10 @@ describe("for handling merging when green", () => {
     const logger = getFakeLogger()
 
     // Says al CI statuses are green
-    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "SUCCESS" }]}})
+    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "success" }]}})
 
     // Gets a corresponding issue
-    mockAPI.search.issues.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })
+    mockAPI.search.issuesAndPullRequests.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })
 
     // Returns an issue without the merge on green label
     mockAPI.issues.get.mockResolvedValueOnce({ data: { labels: [{ name: "Dog Snoozer" }] } })
@@ -57,10 +57,10 @@ describe("for handling merging when green", () => {
     const logger = getFakeLogger()
 
     // Says al CI statuses are green
-    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "SUCCESS" }]}})
+    mockAPI.checks.listForRef.mockResolvedValueOnce({ data: { check_runs: [{ conclusion: "success" }]}})
 
     // Gets a corresponding issue
-    mockAPI.search.issues.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })
+    mockAPI.search.issuesAndPullRequests.mockResolvedValueOnce({ data: { items: [{ number: 1 }] } })
 
     // Returns an issue without the merge on green label
     mockAPI.issues.get.mockResolvedValueOnce({ data: { labels: [{ name: "Merge On Green" }] } })
@@ -75,7 +75,7 @@ describe("for handling merging when green", () => {
 
     expect(mockAPI.pulls.merge).toBeCalledWith({
       commit_title: "Merge pull request #1 by microsoft/typescript-repos-automation",
-      number: 1,
+      pull_number: 1,
       owner: "danger",
       repo: "doggo",
     })

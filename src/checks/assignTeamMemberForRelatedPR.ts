@@ -1,25 +1,25 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { Logger } from "@azure/functions"
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { Logger } from "../util/logger"
 
 /**
  * If a community PR comes in with a 'fixes #43' and 43 is assigned to a team member, then assign that PR
  */
-export const assignTeamMemberForRelatedPR = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger) => {
+export const assignTeamMemberForRelatedPR = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
   if (pull_request.assignees.length > 0) {
     return logger.info("Skipping because there are assignees already")
   }
 
-  const relatedIssues = await getRelatedIssues(pull_request.body, repo.owner.login, repo.name, api)
+  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
   if (!relatedIssues) {
     return logger.info("Skipping because there are no related issues")
   }
 
   const assignees: string[] = []
   for (const issue of relatedIssues) {
-    for (const issueAssignee of issue.assignees) {
+    for (const issueAssignee of issue.assignees ?? []) {
         assignees.push(issueAssignee.login)
     }
   }

@@ -13,15 +13,15 @@ fixes https://github.com/microsoft/TypeScript/issues/6
 
   const result = findIssuesInBody(body)
   expect(result).toMatchInlineSnapshot(`
-    Array [
-      "#1",
-      "#2",
-      "microsoft/typescript#4",
-      "microsoft/typescript#3",
-      "#5",
-      "https://github.com/microsoft/typescript/issues/6",
-    ]
-  `)
+[
+  "#1",
+  "#2",
+  "microsoft/typescript#4",
+  "microsoft/typescript#3",
+  "#5",
+  "https://github.com/microsoft/typescript/issues/6",
+]
+`)
 })
 
 it("pulls out issues", () => {
@@ -35,10 +35,10 @@ fixes https://github.com/microsoft/TypeScript/issues/6
   const allResults = findIssuesInBody(body)
   const constrainedResults = constrainIssuesToBaseRepo(allResults, "MiCrOSoFT/TypeScript")
   expect(constrainedResults).toMatchInlineSnapshot(`
-    Array [
-      "3",
-      "6",
-      "1",
-    ]
-  `)
+[
+  "3",
+  "6",
+  "1",
+]
+`)
 })

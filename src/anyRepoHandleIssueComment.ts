@@ -1,22 +1,23 @@
-import { WebhookPayloadIssueComment } from "@octokit/webhooks"
-import { Context, Logger } from "@azure/functions"
+import { IssueCommentEvent } from "@octokit/webhooks-types"
+import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { createGitHubClient } from "./util/createGitHubClient"
 import { Octokit } from "@octokit/rest"
 import { sha } from "./sha"
 import { mergeThroughCodeOwners } from "./checks/mergeThroughCodeOwners"
 import { addReprosLabelOnComments } from "./checks/addReprosLabel"
+import { Logger } from "./util/logger"
 
-export const anyRepoHandleIssueCommentPayload = async (payload: WebhookPayloadIssueComment, context: Context) => {
+export const anyRepoHandleIssueCommentPayload = async (payload: IssueCommentEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()
   const ran = [] as string[]
 
   const run = (
     name: string,
-    fn: (api: Octokit, payload: WebhookPayloadIssueComment, logger: Logger) => Promise<void>
+    fn: (api: Octokit, payload: IssueCommentEvent, logger: Logger) => Promise<void>
   ) => {
-    context.log.info(`\n\n## ${name}\n`)
+    context.info(`\n\n## ${name}\n`)
     ran.push(name)
-    return fn(api, payload, context.log)
+    return fn(api, payload, context)
   }
 
   // Making this one whitelisted to the website for now
@@ -28,7 +29,7 @@ export const anyRepoHandleIssueCommentPayload = async (payload: WebhookPayloadIs
     await run("Checking if we should add the repros label", addReprosLabelOnComments)
   }
 
-  context.res = {
+  return {
     status: 200,
     headers: { sha: sha },
     body: `Success, ran: ${ran.join(", ")}`,

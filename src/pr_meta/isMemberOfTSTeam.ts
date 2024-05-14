@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest"
-import type { Logger } from "@azure/functions"
+import { Logger } from "../util/logger"
 let cachedTSTeam: string[] = []
 
 /** Checks if someone is a member of a team, and always bails with TS bot */
@@ -10,7 +10,7 @@ export const isMemberOfTSTeam = async (username: string, api: Octokit, _log: Log
     return cachedTSTeam.includes(username)
   }
 
-  const contentResponse = await api.repos.getContents({
+  const contentResponse = await api.repos.getContent({
     path: ".github/pr_owners.txt",
     repo: "TypeScript",
     owner: "Microsoft",

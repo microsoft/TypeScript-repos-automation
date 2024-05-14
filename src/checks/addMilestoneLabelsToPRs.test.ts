@@ -5,6 +5,7 @@ import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGi
 import { getFakeLogger } from "../util/tests/createMockContext"
 
 import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { Label } from "@octokit/webhooks-types"
 const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
 
 describe(addMilestoneLabelsToPRs, () => {
@@ -13,7 +14,7 @@ describe(addMilestoneLabelsToPRs, () => {
     mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
 
     const pr = getPRFixture("opened")
-    pr.pull_request.labels = [{ name: "Something" }, { name: "Other" }]
+    pr.pull_request.labels = [{ name: "Something" } as Partial<Label> as Label, { name: "Other" } as Partial<Label> as Label]
 
     await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
 
@@ -49,7 +50,7 @@ describe(addMilestoneLabelsToPRs, () => {
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
-    pr.pull_request.labels = [{ name: "For Backlog Bug" }]
+    pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
 
     await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
 
@@ -82,7 +83,7 @@ describe(addMilestoneLabelsToPRs, () => {
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
-    pr.pull_request.labels = [{ name: "For Backlog Bug" }]
+    pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
 
     await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
 

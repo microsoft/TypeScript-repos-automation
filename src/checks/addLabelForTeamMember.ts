@@ -1,12 +1,12 @@
-import { WebhookPayloadPullRequest } from "@octokit/webhooks"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import type { Logger } from "@azure/functions"
 import type { PRInfo } from "../anyRepoHandlePullRequest"
+import { Logger } from "../util/logger"
 
 /**
  * If the PR comes from a core contributor, add a label to indicate it came from a maintainer
  */
-export const addLabelForTeamMember = async (api: Octokit, payload: WebhookPayloadPullRequest, logger: Logger, info: PRInfo) => {
+export const addLabelForTeamMember = async (api: Octokit, payload: PullRequestEvent, logger: Logger, info: PRInfo) => {
   const { repository: repo, pull_request } = payload
 
   // Check the access level of the user

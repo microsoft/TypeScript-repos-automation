@@ -5,13 +5,14 @@ import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../ut
 import { getFakeLogger } from "../util/tests/createMockContext"
 
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
+import { User } from "@octokit/webhooks-types"
 const mockIsMember = (isMemberOfTSTeam as any) as jest.Mock
 
 describe(assignSelfToNewPullRequest, () => {
   it("NO-OPs when there's assignees already ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const pr = getPRFixture("opened")
-    pr.pull_request.assignees = ["orta"]
+    pr.pull_request.assignees = [{ login: "orta" } as Partial<User> as User]
 
     await assignSelfToNewPullRequest(api, pr, getFakeLogger())
 
