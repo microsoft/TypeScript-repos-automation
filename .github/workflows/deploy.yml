@@ -49,8 +49,8 @@ jobs:
       - name: Upload blob
         run: az storage blob upload -f ${{ env.FUNCTION_ZIP_NAME }} --account-name ${{ env.STORAGE_ACCOUNT_NAME }} -c ${{ env.STORAGE_CONTAINER_NAME }} -n ${{ env.FUNCTION_ZIP_NAME }} --overwrite true --auth-mode login
 
-      - name: Set package path
-        run: az functionapp config appsettings set -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }} --settings WEBSITE_RUN_FROM_PACKAGE="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.STORAGE_CONTAINER_NAME }}/${{ env.FUNCTION_ZIP_NAME }}"
+      # - name: Set package path
+      #   run: az functionapp config appsettings set -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }} --settings WEBSITE_RUN_FROM_PACKAGE="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.STORAGE_CONTAINER_NAME }}/${{ env.FUNCTION_ZIP_NAME }}"
 
       - name: Restart app
         run: az functionapp restart -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }}
