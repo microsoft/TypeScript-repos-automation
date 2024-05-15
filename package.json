@@ -18,8 +18,7 @@
   "dependencies": {
     "@azure/functions": "^4.4.0",
     "@octokit/rest": "^20.1.1",
-    "@octokit/webhooks-methods": "^4.1.0",
-    "minimatch": "^9.0.4"
+    "@octokit/webhooks-methods": "^4.1.0"
   },
   "devDependencies": {
     "@octokit/webhooks-types": "^7.5.1",
