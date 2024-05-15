@@ -32,7 +32,7 @@ describe(addCommentToUncommittedPRs, () => {
     const pr = getPRFixture("opened")
     pr.pull_request.user.login = "typescript-bot"
 
-    const info = createPRInfo({ authorIsTypescriptBot: true })
+    const info = createPRInfo({ authorIsBot: true })
     await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()

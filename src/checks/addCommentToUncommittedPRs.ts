@@ -7,7 +7,7 @@ import { Logger } from "../util/logger"
  * Comment on new PRs that don't have linked issues, or link to uncommitted issues.
  */
 export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger, info: PRInfo) => {
-  if (payload.pull_request.merged || payload.pull_request.draft || info.authorIsMemberOfTSTeam || info.authorIsTypescriptBot) {
+  if (payload.pull_request.merged || payload.pull_request.draft || info.authorIsMemberOfTSTeam || info.authorIsBot) {
     return logger.trace("Skipping") 
   }
 
