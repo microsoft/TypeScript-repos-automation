@@ -4,7 +4,7 @@ export const createPRInfo = (info?: Partial<PRInfo>): PRInfo => {
   return {
     comments: [],
     authorIsMemberOfTSTeam: false,
-    authorIsTypescriptBot: false,
+    authorIsBot: false,
     relatedIssues: [],
     thisIssue: {
       issue_number: 35454,
