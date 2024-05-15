@@ -1,0 +1,56 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
+  FUNCTION_APP_NAME: TypeScriptReposAutomation2
+  STORAGE_ACCOUNT_NAME: typescriptreposauto997e
+  STORAGE_CONTAINER_NAME: deployment
+  FUNCTION_ZIP_NAME: function.zip
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install and test
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+          npm prune --production
+
+      - name: Create ${{ env.FUNCTION_ZIP_NAME }}
+        run: zip -r ${{ env.FUNCTION_ZIP_NAME }} .
+
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+      - name: Upload blob
+        run: az storage blob upload -f ${{ env.FUNCTION_ZIP_NAME }} --account-name ${{ env.STORAGE_ACCOUNT_NAME }} -c ${{ env.STORAGE_CONTAINER_NAME }} -n ${{ env.FUNCTION_ZIP_NAME }} --overwrite true --auth-mode login
+
+      - name: Set package path
+        run: az functionapp config appsettings set -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }} --settings WEBSITE_RUN_FROM_PACKAGE="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.STORAGE_CONTAINER_NAME }}/${{ env.FUNCTION_ZIP_NAME }}"
+
+      - name: Restart app
+        run: az functionapp restart -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }}
