@@ -38,7 +38,6 @@ export const createMockGitHubClient = () => {
     },
     pulls: {
       get: jest.fn(),
-      merge: jest.fn(),
       listFiles: {
         endpoint: {
           merge: jest.fn(),
@@ -96,7 +95,6 @@ export const createFakeGitHubClient = () => {
     },
     pulls: {
       get: Promise.resolve({}),
-      merge: Promise.resolve({}),
       listFiles: Promise.resolve({}),
     },
     checks: {

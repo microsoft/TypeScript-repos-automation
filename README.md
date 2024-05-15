@@ -9,7 +9,6 @@
 
 - Adds a label for any new PR by a core team member
 - Assigns a core team member to their own PR if no-one is assigned
-- Allows merging on green when a PR's statuses are all green and there is a label "Merge on Green" on the PR
 
 #### Issues
 
