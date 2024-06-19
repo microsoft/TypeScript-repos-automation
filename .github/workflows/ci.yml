@@ -6,10 +6,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
+        # os:
+        #   - ubuntu-latest
+        #   - windows-latest
+        image:
           - ubuntu-latest
           - windows-latest
-    runs-on: ${{ matrix.os }}
+    # runs-on: ${{ matrix.os }}
+    runs-on:
+      - "self-hosted"
+      - "1ES.Pool=TypeScript-1ES-GitHub-Deploys"
+      - "1ES.ImageOverride=${{ matrix.image }}"
     steps:
     - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
     - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
