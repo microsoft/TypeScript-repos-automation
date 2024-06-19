@@ -10,8 +10,8 @@ jobs:
         #   - ubuntu-latest
         #   - windows-latest
         image:
-          - ubuntu-latest
-          - windows-latest
+          - ubuntu-22.04
+          - windows-2022
     # runs-on: ${{ matrix.os }}
     runs-on:
       - "self-hosted"
