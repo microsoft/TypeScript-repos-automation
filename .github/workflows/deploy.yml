@@ -43,8 +43,7 @@ jobs:
             host.json
             package.json
             node_modules
-            functions
-            src
+            dist
 
   deploy:
     runs-on: ubuntu-latest
