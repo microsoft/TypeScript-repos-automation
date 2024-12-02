@@ -55,6 +55,7 @@ export const createMockGitHubClient = () => {
       issuesAndPullRequests: jest.fn(),
     },
     paginate: jest.fn(),
+    graphql: jest.fn(),
   }
 
   return {
@@ -108,6 +109,7 @@ export const createFakeGitHubClient = () => {
       issuesAndPullRequests: Promise.resolve({}),
     },
     paginate: Promise.resolve({}) as any,
+    graphql: Promise.resolve({}) as any,
   }
 
   return (fake as unknown) as Octokit
@@ -128,7 +130,7 @@ export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): Pu
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "pulls", fixture + ".json"), "utf8"))
 
 /** Grabs a known issue fixture */
-export const getIssueFixture = (fixture: "opened" | "labeled"): IssuesEvent =>
+export const getIssueFixture = (fixture: "opened" | "labeled" | "milestoned"): IssuesEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"))
 
   /** Grabs a known issue fixture */
