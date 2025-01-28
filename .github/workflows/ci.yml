@@ -3,10 +3,13 @@ on: pull_request
 
 jobs:
   test:
-    runs-on:
-      - "self-hosted"
-      - "1ES.Pool=TypeScript-1ES-GitHub-Deploys"
-      - "1ES.ImageOverride=mariner-2.0"
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
