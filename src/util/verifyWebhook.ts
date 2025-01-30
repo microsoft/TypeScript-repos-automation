@@ -2,19 +2,17 @@ import { HttpRequest, InvocationContext } from "@azure/functions";
 import { verify } from "@octokit/webhooks-methods";
 import assert from "assert";
 
-const isDev = process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development";
-
-const githubWebhookSecret = process.env.GITHUB_WEBHOOK_SECRET;
 
 export function verifyGitHubWebhook(request: HttpRequest, context: InvocationContext, body: string) {
-  if (isDev) {
+  if (process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development") {
     return undefined;
   }
 
-  assert(githubWebhookSecret, "GITHUB_WEBHOOK_SECRET is not set");
+const secret = process.env.GITHUB_WEBHOOK_SECRET;
+assert(secret, "GITHUB_WEBHOOK_SECRET is not set");
 
   const sig = request.headers.get("x-hub-signature-256");
-  if (!sig || !verify(githubWebhookSecret, body, `sha256=${sig}`)) {
+  if (!sig || !verify(secret, body, `sha256=${sig}`)) {
     context.log("Invalid signature");
     return {
       status: 500,
