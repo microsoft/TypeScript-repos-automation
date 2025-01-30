@@ -6,9 +6,6 @@ const isDev = process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development";
 
 const githubWebhookSecret = process.env.GITHUB_WEBHOOK_SECRET;
 
-assert(isDev || githubWebhookSecret, "GITHUB_WEBHOOK_SECRET is not set");
-
-
 export function verifyGitHubWebhook(request: HttpRequest, context: InvocationContext, body: string) {
   if (isDev) {
     return undefined;
