@@ -8,6 +8,5 @@
   ],
   "ignore": ["dist/**", "src/util/createCLILogger.ts", "src/util/tests/**"],
   "ignoreBinaries": ["func"],
-  "ignoreDependencies": ["@types/jest"],
   "ignoreExportsUsedInFile": true
 }
