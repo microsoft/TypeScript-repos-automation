@@ -30,7 +30,7 @@ export const findIssuesInBody = (body: string) => {
       const regex = new RegExp(`${prefix}:? (\\S*)`, "g")
       let match = regex.exec(lowerBody)
       while (match != null) {
-        results.push(match[1])
+        results.push(match[1]!)
         match = regex.exec(lowerBody)
       }
     }

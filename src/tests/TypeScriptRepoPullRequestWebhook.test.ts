@@ -1,13 +1,10 @@
 jest.mock("../anyRepoHandlePullRequest", () => ({ handlePullRequestPayload: jest.fn() }))
-jest.mock("../anyRepoHandleStatusUpdate", () => ({ anyRepoHandleStatusUpdate: jest.fn() }))
 jest.mock("../anyRepoHandleIssueComment", () => ({ anyRepoHandleIssueCommentPayload: jest.fn() }))
 jest.mock("../anyRepoHandleIssue", () => ({ handleIssuePayload: jest.fn() }))
 
 import webhook from "../../functions/TypeScriptRepoPullRequestWebhook"
 import { handlePullRequestPayload } from "../anyRepoHandlePullRequest"
-import { anyRepoHandleStatusUpdate } from "../anyRepoHandleStatusUpdate"
 import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment"
-import { handleIssuePayload } from "../anyRepoHandleIssue"
 import { HttpRequest, InvocationContext } from "@azure/functions"
 
 it("calls handle PR from the webhook main", async () => {
@@ -15,13 +12,6 @@ it("calls handle PR from the webhook main", async () => {
   await webhook(new HttpRequest({ method: "POST", url: "https://example.org", body: { string: "{}" }, headers: { "x-github-event": "pull_request" } }), new InvocationContext({ logHandler: () => "" }))
 
   expect(handlePullRequestPayload).toHaveBeenCalled()
-})
-
-it("calls handle status from the webhook main", async () => {
-  process.env.AZURE_FUNCTIONS_ENVIRONMENT = "Development"
-  await webhook(new HttpRequest({ method: "POST", url: "https://example.org", body: { string: "{}" }, headers: { "x-github-event": "status" } }), new InvocationContext({ logHandler: () => "" }))
-
-  expect(anyRepoHandleStatusUpdate).toHaveBeenCalled()
 })
 
 it("calls handle comments from the webhook main", async () => {

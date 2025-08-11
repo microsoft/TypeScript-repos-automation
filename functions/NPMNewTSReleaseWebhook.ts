@@ -13,7 +13,7 @@ type NPMWebhook = {
 }
 
 const crypto  = require('crypto');
-const httpTrigger: HttpHandler = async function (req, context) {
+const httpTrigger: HttpHandler = async function (req, _context) {
     const bodyText = await req.text();
     const expectedSignature = crypto
         .createHmac('sha256', process.env.NPM_HOOK_SECRET)

@@ -33,7 +33,7 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequ
     }))
 
     if (isSuggestion && !isCommitted) {
-      const message = `The TypeScript team hasn't accepted the linked issue #${info.relatedIssues[0].number}. If you can get it accepted, this PR will have a better chance of being reviewed.`
+      const message = `The TypeScript team hasn't accepted the linked issue #${info.relatedIssues[0]?.number}. If you can get it accepted, this PR will have a better chance of being reviewed.`
       const needsComment = !info.comments || !info.comments.find(c => c.body?.startsWith(message.slice(0, 25)))
       if (needsComment) {
         await api.issues.createComment({

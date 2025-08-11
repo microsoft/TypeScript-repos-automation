@@ -1,5 +1,3 @@
-import { Octokit } from "@octokit/rest"
-
 export const pingDiscord = async (msg: string, config: { number: number; title: string; body: string; url: string }) => {
   if (!process.env.REPRO_REQUEST_DISCORD_WEBHOOK) throw new Error("No process var for REPRO_REQUEST_DISCORD_WEBHOOK")
 
@@ -27,7 +25,7 @@ export const stripBody = (str: string)=> {
   if (str.includes("𝗦𝗧𝗢𝗣") && str.includes("## Use Cases")) {
     // https://regex101.com/r/uEmvAZ/1
     const stripComments = /<!--[^>]*-->/g
-    body = str.replace(stripComments, "").split("## Use Cases")[1].split("## Checklist")[0].slice(0, 199)
+    body = str.replace(stripComments, "").split("## Use Cases")[1]!.split("## Checklist")[0]!.slice(0, 199)
   }
 
   return body

@@ -1,7 +1,6 @@
 import { app, HttpHandler } from "@azure/functions"
 
 import { handlePullRequestPayload } from "../src/anyRepoHandlePullRequest";
-import { anyRepoHandleStatusUpdate } from "../src/anyRepoHandleStatusUpdate";
 import { anyRepoHandleIssueCommentPayload } from "../src/anyRepoHandleIssueComment";
 import { handleIssuePayload } from "../src/anyRepoHandleIssue";
 import { verifyGitHubWebhook } from "../src/util/verifyWebhook";
@@ -29,8 +28,6 @@ const httpTrigger: HttpHandler = async function (request, context) {
     case "pull_request":
       return handlePullRequestPayload(body, context);
 
-    case "status":
-      return anyRepoHandleStatusUpdate(body, context);
 
     case "issue_comment":
       return anyRepoHandleIssueCommentPayload(body, context)
