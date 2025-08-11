@@ -1,7 +1,7 @@
 jest.mock("../pr_meta/isMemberOfTSTeam")
 
 import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest"
-import { createMockGitHubClient, convertToOctokitAPI, getPRFixture } from "../util/tests/createMockGitHubClient"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
 import { getFakeLogger } from "../util/tests/createMockContext"
 
 import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"

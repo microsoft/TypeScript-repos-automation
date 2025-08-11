@@ -7,7 +7,6 @@ import webhook from "../../functions/TypeScriptRepoPullRequestWebhook"
 import { handlePullRequestPayload } from "../anyRepoHandlePullRequest"
 import { anyRepoHandleStatusUpdate } from "../anyRepoHandleStatusUpdate"
 import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment"
-import { handleIssuePayload } from "../anyRepoHandleIssue"
 import { HttpRequest, InvocationContext } from "@azure/functions"
 
 it("calls handle PR from the webhook main", async () => {

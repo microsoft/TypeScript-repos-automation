@@ -1,9 +1,10 @@
 {
-  "extends": "@tsconfig/node20",
+  "extends": ["@tsconfig/node20", "@tsconfig/strictest"],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "noPropertyAccessFromIndexSignature": false
   }
 }
