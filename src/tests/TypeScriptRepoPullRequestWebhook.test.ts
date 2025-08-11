@@ -1,5 +1,4 @@
 jest.mock("../anyRepoHandlePullRequest", () => ({ handlePullRequestPayload: jest.fn() }))
-jest.mock("../anyRepoHandleStatusUpdate", () => ({ anyRepoHandleStatusUpdate: jest.fn() }))
 jest.mock("../anyRepoHandleIssueComment", () => ({ anyRepoHandleIssueCommentPayload: jest.fn() }))
 jest.mock("../anyRepoHandleIssue", () => ({ handleIssuePayload: jest.fn() }))
 
