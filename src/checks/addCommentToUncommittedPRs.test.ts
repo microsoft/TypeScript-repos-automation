@@ -67,7 +67,7 @@ describe(addCommentToUncommittedPRs, () => {
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
   })
 
-  for (const allowed of ["Experience Enhancement", "Committed", "help wanted"]) {
+  for (const allowed of ["Experience Enhancement", "Committed", "Help Wanted", "help wanted"]) {
     it("Does not add a comment to an uncommented PR linked to a suggestion with the label " + allowed, async () => {
       const { mockAPI, api } = createMockGitHubClient()
       
