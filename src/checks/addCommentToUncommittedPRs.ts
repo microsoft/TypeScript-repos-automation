@@ -25,11 +25,11 @@ export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequ
   else {
     const isSuggestion = info.relatedIssues.some(issue => issue.labels?.find(l => {
       const name = typeof l === "string" ? l : l.name;
-      return name === "Suggestion"
+      return name?.toLowerCase() === "suggestion"
     }))
     const isCommitted = info.relatedIssues.some(issue => issue.labels?.find(l => {
       const name = typeof l === "string" ? l : l.name;
-      return name === "Committed" || name === "Experience Enhancement" || name === "help wanted"
+      return name?.toLowerCase() === "committed" || name?.toLowerCase() === "experience enhancement" || name?.toLowerCase() === "help wanted"
     }))
 
     if (isSuggestion && !isCommitted) {
