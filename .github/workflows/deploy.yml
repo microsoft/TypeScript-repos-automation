@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  NODE_VERSION: '22.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
   RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
   FUNCTION_APP_NAME: TypeScriptReposAutomation2
   STORAGE_ACCOUNT_NAME: typescriptreposauto997e
