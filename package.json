@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@azure/functions": "^4.7.2-preview",
+    "@azure/functions": "^4.8.0",
     "@octokit/rest": "^20.1.1",
     "@octokit/webhooks-methods": "^4.1.0"
   },
@@ -29,7 +29,7 @@
     "jest": "^30.0.5",
     "knip": "^5.62.0",
     "ts-jest": "^29.4.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "jest": {
     "preset": "ts-jest",
