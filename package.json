@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@azure/functions": "^4.8.0",
+    "@azure/functions": "^4.11.0",
     "@octokit/rest": "^20.1.1",
     "@octokit/webhooks-methods": "^4.1.0"
   },
