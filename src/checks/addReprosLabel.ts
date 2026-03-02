@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest"
 
-import { pingDiscord, stripBody } from "./pingDiscordForReproRequests"
-import { Logger } from "../util/logger"
+import { pingDiscord, stripBody } from "./pingDiscordForReproRequests.js"
+import { Logger } from "../util/logger.js"
 import { IssueCommentEvent, IssuesEvent } from "@octokit/webhooks-types"
 
 const checkForRepro = (body: string) => {

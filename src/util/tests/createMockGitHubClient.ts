@@ -1,6 +1,7 @@
+import { vi } from "vitest"
 import { Octokit } from "@octokit/rest"
-import { readFileSync } from "fs"
-import { join } from "path"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 import { IssueCommentEvent, IssuesEvent, PullRequestEvent } from "@octokit/webhooks-types"
 
 /**
@@ -22,40 +23,40 @@ import { IssueCommentEvent, IssuesEvent, PullRequestEvent } from "@octokit/webho
 export const createMockGitHubClient = () => {
   const mockAPI = {
     repos: {
-      checkCollaborator: jest.fn(),
-      getContent: jest.fn(),
-      getCombinedStatusForRef: jest.fn(),
-      createDispatchEvent: jest.fn()
+      checkCollaborator: vi.fn(),
+      getContent: vi.fn(),
+      getCombinedStatusForRef: vi.fn(),
+      createDispatchEvent: vi.fn()
     },
     issues: {
-      addAssignees: jest.fn(),
-      createComment: jest.fn(),
-      listComments: jest.fn(),
-      replaceLabels: jest.fn(),
-      addLabels: jest.fn(),
-      removeLabel: jest.fn(),
-      get: jest.fn(),
+      addAssignees: vi.fn(),
+      createComment: vi.fn(),
+      listComments: vi.fn(),
+      replaceLabels: vi.fn(),
+      addLabels: vi.fn(),
+      removeLabel: vi.fn(),
+      get: vi.fn(),
     },
     pulls: {
-      get: jest.fn(),
+      get: vi.fn(),
       listFiles: {
         endpoint: {
-          merge: jest.fn(),
+          merge: vi.fn(),
         },
       },
     },
     checks: {
-      listForRef: jest.fn()
+      listForRef: vi.fn()
     },
     teams: {
-      getByName: jest.fn(),
-      getMembership: jest.fn(),
+      getByName: vi.fn(),
+      getMembership: vi.fn(),
     },
     search: {
-      issuesAndPullRequests: jest.fn(),
+      issuesAndPullRequests: vi.fn(),
     },
-    paginate: jest.fn(),
-    graphql: jest.fn(),
+    paginate: vi.fn(),
+    graphql: vi.fn(),
   }
 
   return {

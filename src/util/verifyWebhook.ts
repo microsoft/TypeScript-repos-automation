@@ -1,6 +1,6 @@
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { verify } from "@octokit/webhooks-methods";
-import assert from "assert";
+import assert from "node:assert";
 
 
 export function verifyGitHubWebhook(request: HttpRequest, context: InvocationContext, body: string) {

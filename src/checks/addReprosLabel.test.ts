@@ -1,11 +1,12 @@
-jest.mock("../pr_meta/isMemberOfTSTeam")
-jest.mock("./pingDiscordForReproRequests")
+import { vi, describe, it, expect } from "vitest"
+vi.mock("../pr_meta/isMemberOfTSTeam.js")
+vi.mock("./pingDiscordForReproRequests.js")
 
-import { createMockGitHubClient, getIssueFixture, getIssueCommentFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
+import { createMockGitHubClient, getIssueFixture, getIssueCommentFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
 
-import { addReprosLabelOnComments, addReprosLabelOnIssue } from "./addReprosLabel"
-import { pingDiscord } from "./pingDiscordForReproRequests"
+import { addReprosLabelOnComments, addReprosLabelOnIssue } from "./addReprosLabel.js"
+import { pingDiscord } from "./pingDiscordForReproRequests.js"
 
 describe(addReprosLabelOnIssue, () => {
   it("NO-OPs when the action isn't opened or edited ", async () => {

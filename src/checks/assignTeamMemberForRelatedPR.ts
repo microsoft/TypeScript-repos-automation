@@ -1,7 +1,7 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
-import { Logger } from "../util/logger"
+import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
+import { Logger } from "../util/logger.js"
 
 /**
  * If a community PR comes in with a 'fixes #43' and 43 is assigned to a team member, then assign that PR

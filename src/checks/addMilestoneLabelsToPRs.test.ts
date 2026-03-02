@@ -1,12 +1,13 @@
-jest.mock("../pr_meta/getRelatedIssues")
+import { vi, describe, it, expect, Mock } from "vitest"
+vi.mock("../pr_meta/getRelatedIssues.js")
 
-import { addMilestoneLabelsToPRs } from "./addMilestoneLabelsToPRs"
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
+import { addMilestoneLabelsToPRs } from "./addMilestoneLabelsToPRs.js"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
 
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
 import { Label } from "@octokit/webhooks-types"
-const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
+const mockGetRelatedIssues = (getRelatedIssues as any) as Mock
 
 describe(addMilestoneLabelsToPRs, () => {
   it("Keeps existing labels from the PR", async () => {

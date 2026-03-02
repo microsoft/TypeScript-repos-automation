@@ -1,15 +1,16 @@
+import { vi } from "vitest"
 import { InvocationContext } from "@azure/functions"
-import { Logger } from "../logger"
+import { Logger } from "../logger.js"
 
 /** Returns a logger which conforms to the Azure logger interface */
 export const getFakeLogger = (): Logger => {
-  const cliLogger = jest.fn() as any as Logger
-  cliLogger.log = jest.fn()
-  cliLogger.trace = jest.fn()
-  cliLogger.debug = jest.fn()
-  cliLogger.info = jest.fn()
-  cliLogger.warn = jest.fn()
-  cliLogger.error = jest.fn()
+  const cliLogger = vi.fn() as any as Logger
+  cliLogger.log = vi.fn()
+  cliLogger.trace = vi.fn()
+  cliLogger.debug = vi.fn()
+  cliLogger.info = vi.fn()
+  cliLogger.warn = vi.fn()
+  cliLogger.error = vi.fn()
   return cliLogger
 }
 

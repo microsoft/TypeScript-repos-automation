@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest"
-import { Logger } from "../util/logger"
+import { Logger } from "../util/logger.js"
 let cachedTSTeam: string[] = []
 
 /** Checks if someone is a member of a team, and always bails with TS bot */

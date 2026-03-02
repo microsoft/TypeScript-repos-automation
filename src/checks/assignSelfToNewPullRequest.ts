@@ -1,7 +1,7 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
-import { Logger } from "../util/logger"
+import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam.js"
+import { Logger } from "../util/logger.js"
 
 /**
  * If the PR comes from a core contributor, set themselves to be the assignee

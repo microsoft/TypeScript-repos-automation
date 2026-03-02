@@ -1,4 +1,4 @@
-import { Logger } from "./logger"
+import { Logger } from "./logger.js"
 
 const cliLogger: Logger = {
   log: console.log,

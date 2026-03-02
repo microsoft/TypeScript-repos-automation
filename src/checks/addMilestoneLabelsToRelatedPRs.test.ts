@@ -1,12 +1,13 @@
-import { addMilestoneLabelsToRelatedPRs } from "./addMilestoneLabelsToRelatedPRs";
+import { describe, it, expect } from "vitest"
+import { addMilestoneLabelsToRelatedPRs } from "./addMilestoneLabelsToRelatedPRs.js";
 import {
   createMockGitHubClient,
   getIssueFixture,
-} from "../util/tests/createMockGitHubClient";
-import { getFakeLogger } from "../util/tests/createMockContext";
+} from "../util/tests/createMockGitHubClient.js";
+import { getFakeLogger } from "../util/tests/createMockContext.js";
 
 import { IssuesEvent } from "@octokit/webhooks-types";
-import { getRelatedPRsResponseData } from "../issue_meta/getRelatedPRs";
+import { getRelatedPRsResponseData } from "../issue_meta/getRelatedPRs.js";
 
 function getRelatedPRMock(
   labels: string[] = ["For Uncommitted Bug"]

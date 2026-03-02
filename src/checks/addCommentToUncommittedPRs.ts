@@ -1,7 +1,7 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import type { PRInfo } from "../anyRepoHandlePullRequest"
-import { Logger } from "../util/logger"
+import type { PRInfo } from "../anyRepoHandlePullRequest.js"
+import { Logger } from "../util/logger.js"
 
 /**
  * Comment on new PRs that don't have linked issues, or link to uncommitted issues.

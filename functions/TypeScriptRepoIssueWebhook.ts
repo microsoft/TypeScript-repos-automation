@@ -1,5 +1,5 @@
 import { app, HttpHandler } from "@azure/functions"
-import { verifyGitHubWebhook } from "../src/util/verifyWebhook";
+import { verifyGitHubWebhook } from "../src/util/verifyWebhook.js";
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
 // context and into the `src` directory, where work can be done against tests instead requiring changes to happen
