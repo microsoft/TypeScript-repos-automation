@@ -1,10 +1,10 @@
 import { IssueCommentEvent } from "@octokit/webhooks-types"
 import { HttpResponseInit, InvocationContext } from "@azure/functions"
-import { createGitHubClient } from "./util/createGitHubClient"
+import { createGitHubClient } from "./util/createGitHubClient.js"
 import { Octokit } from "@octokit/rest"
-import { sha } from "./sha"
-import { addReprosLabelOnComments } from "./checks/addReprosLabel"
-import { Logger } from "./util/logger"
+import { sha } from "./sha.js"
+import { addReprosLabelOnComments } from "./checks/addReprosLabel.js"
+import { Logger } from "./util/logger.js"
 
 export const anyRepoHandleIssueCommentPayload = async (payload: IssueCommentEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()

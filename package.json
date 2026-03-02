@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "main": "dist/functions/*.js",
   "scripts": {
@@ -13,31 +14,21 @@
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
-    "test": "jest"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@azure/functions": "^4.11.0",
-    "@octokit/rest": "^20.1.1",
-    "@octokit/webhooks-methods": "^4.1.0"
+    "@azure/functions": "^4.11.2",
+    "@octokit/rest": "^22.0.1",
+    "@octokit/webhooks-methods": "^6.0.0"
   },
   "devDependencies": {
-    "@octokit/webhooks-types": "^7.5.1",
-    "@tsconfig/node20": "^20.1.6",
-    "@tsconfig/strictest": "^2.0.5",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^20.19.10",
-    "jest": "^30.0.5",
-    "knip": "^5.62.0",
-    "ts-jest": "^29.4.1",
-    "typescript": "^5.9.3"
+    "@octokit/webhooks-types": "^7.6.1",
+    "@tsconfig/node22": "^22.0.5",
+    "@tsconfig/strictest": "^2.0.8",
+    "@types/node": "^22.19.13",
+    "knip": "^5.85.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "prettierPath": null,
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "dist"
-    ]
-  },
-  "packageManager": "npm@10.9.3+sha512.e84875bb943e908557780f1eee5d9cfc7a67145730ae4b77ef10ccba30f96ded6096859af69ea3dc5b2fde60725d79aa247cbed9c12544c30bf28a4d4fbc4825"
+  "packageManager": "npm@11.11.0+sha512.f36811c4aae1fde639527368ae44c571d050006a608d67a191f195a801a52637a312d259186254aa3a3799b05335b7390539cf28656d18f0591a1125ba35f973"
 }

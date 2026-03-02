@@ -1,12 +1,13 @@
-jest.mock("../pr_meta/getRelatedIssues")
+import { vi, describe, it, expect, Mock } from "vitest"
+vi.mock("../pr_meta/getRelatedIssues.js")
 
-import { assignTeamMemberForRelatedPR } from "./assignTeamMemberForRelatedPR"
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
+import { assignTeamMemberForRelatedPR } from "./assignTeamMemberForRelatedPR.js"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
 
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
+import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
 import { User } from "@octokit/webhooks-types"
-const mockGetRelatedIssues = (getRelatedIssues as any) as jest.Mock
+const mockGetRelatedIssues = (getRelatedIssues as any) as Mock
 
 describe(assignTeamMemberForRelatedPR, () => {
   it("NO-OPs when there's assignees already ", async () => {

@@ -1,4 +1,5 @@
-import { findIssuesInBody, constrainIssuesToBaseRepo } from "./getRelatedIssues"
+import { it, expect } from "vitest"
+import { findIssuesInBody, constrainIssuesToBaseRepo } from "./getRelatedIssues.js"
 
 it("pulls out issues", () => {
   const body = `

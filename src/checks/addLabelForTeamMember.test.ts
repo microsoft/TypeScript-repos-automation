@@ -1,10 +1,11 @@
-jest.mock("../pr_meta/isMemberOfTSTeam")
+import { vi, describe, it, expect } from "vitest"
+vi.mock("../pr_meta/isMemberOfTSTeam.js")
 
-import { addLabelForTeamMember } from "./addLabelForTeamMember"
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
+import { addLabelForTeamMember } from "./addLabelForTeamMember.js"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
 
-import { createPRInfo } from "../util/tests/createPRInfo"
+import { createPRInfo } from "../util/tests/createPRInfo.js"
 
 describe(addLabelForTeamMember, () => {
   it("Adds the label when a team member writes a PR ", async () => {

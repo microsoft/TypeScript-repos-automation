@@ -1,7 +1,7 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues"
-import { Logger } from "../util/logger"
+import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
+import { Logger } from "../util/logger.js"
 
 /**
  * Keep track of the milestone related PRs which are based on linked issues in the PR body

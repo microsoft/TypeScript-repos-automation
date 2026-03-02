@@ -1,7 +1,7 @@
 import { IssuesEvent } from "@octokit/webhooks-types";
 import { Octokit } from "@octokit/rest";
-import { Logger } from "../util/logger";
-import { getRelatedPRs } from "../issue_meta/getRelatedPRs";
+import { Logger } from "../util/logger.js";
+import { getRelatedPRs } from "../issue_meta/getRelatedPRs.js";
 
 export const addMilestoneLabelsToRelatedPRs = async (
   api: Octokit,

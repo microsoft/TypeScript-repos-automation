@@ -1,11 +1,11 @@
 import { IssuesEvent } from "@octokit/webhooks-types"
 import { InvocationContext, HttpResponseInit } from "@azure/functions"
 import { Octokit } from "@octokit/rest"
-import { sha } from "./sha"
-import { addReprosLabelOnIssue } from "./checks/addReprosLabel"
-import { addMilestoneLabelsToRelatedPRs } from "./checks/addMilestoneLabelsToRelatedPRs";
-import { createGitHubClient } from "./util/createGitHubClient"
-import { Logger } from "./util/logger"
+import { sha } from "./sha.js"
+import { addReprosLabelOnIssue } from "./checks/addReprosLabel.js"
+import { addMilestoneLabelsToRelatedPRs } from "./checks/addMilestoneLabelsToRelatedPRs.js";
+import { createGitHubClient } from "./util/createGitHubClient.js"
+import { Logger } from "./util/logger.js"
 
 export const handleIssuePayload = async (payload: IssuesEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = createGitHubClient()

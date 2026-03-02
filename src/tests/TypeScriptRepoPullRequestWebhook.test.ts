@@ -1,10 +1,11 @@
-jest.mock("../anyRepoHandlePullRequest", () => ({ handlePullRequestPayload: jest.fn() }))
-jest.mock("../anyRepoHandleIssueComment", () => ({ anyRepoHandleIssueCommentPayload: jest.fn() }))
-jest.mock("../anyRepoHandleIssue", () => ({ handleIssuePayload: jest.fn() }))
+import { vi, it, expect } from "vitest"
+vi.mock("../anyRepoHandlePullRequest.js", () => ({ handlePullRequestPayload: vi.fn() }))
+vi.mock("../anyRepoHandleIssueComment.js", () => ({ anyRepoHandleIssueCommentPayload: vi.fn() }))
+vi.mock("../anyRepoHandleIssue.js", () => ({ handleIssuePayload: vi.fn() }))
 
-import webhook from "../../functions/TypeScriptRepoPullRequestWebhook"
-import { handlePullRequestPayload } from "../anyRepoHandlePullRequest"
-import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment"
+import webhook from "../../functions/TypeScriptRepoPullRequestWebhook.js"
+import { handlePullRequestPayload } from "../anyRepoHandlePullRequest.js"
+import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment.js"
 import { HttpRequest, InvocationContext } from "@azure/functions"
 
 it("calls handle PR from the webhook main", async () => {

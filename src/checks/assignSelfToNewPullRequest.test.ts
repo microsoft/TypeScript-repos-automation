@@ -1,12 +1,13 @@
-jest.mock("../pr_meta/isMemberOfTSTeam")
+import { vi, describe, it, expect, Mock } from "vitest"
+vi.mock("../pr_meta/isMemberOfTSTeam.js")
 
-import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest"
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
+import { assignSelfToNewPullRequest } from "./assignSelfToNewPullRequest.js"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
 
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam"
+import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam.js"
 import { User } from "@octokit/webhooks-types"
-const mockIsMember = (isMemberOfTSTeam as any) as jest.Mock
+const mockIsMember = (isMemberOfTSTeam as any) as Mock
 
 describe(assignSelfToNewPullRequest, () => {
   it("NO-OPs when there's assignees already ", async () => {

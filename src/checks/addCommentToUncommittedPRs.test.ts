@@ -1,10 +1,11 @@
-jest.mock("../pr_meta/getRelatedIssues")
-jest.mock("../pr_meta/isMemberOfTSTeam")
+import { vi, describe, it, expect } from "vitest"
+vi.mock("../pr_meta/getRelatedIssues.js")
+vi.mock("../pr_meta/isMemberOfTSTeam.js")
 
-import { addCommentToUncommittedPRs } from "./addCommentToUncommittedPRs"
-import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient"
-import { getFakeLogger } from "../util/tests/createMockContext"
-import { createPRInfo } from "../util/tests/createPRInfo"
+import { addCommentToUncommittedPRs } from "./addCommentToUncommittedPRs.js"
+import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
+import { getFakeLogger } from "../util/tests/createMockContext.js"
+import { createPRInfo } from "../util/tests/createPRInfo.js"
 import { Label } from "@octokit/webhooks-types"
 
 describe(addCommentToUncommittedPRs, () => {

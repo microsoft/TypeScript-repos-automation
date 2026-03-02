@@ -1,5 +1,5 @@
 import { app, HttpHandler } from "@azure/functions"
-import { createGitHubClient } from "../src/util/createGitHubClient";
+import { createGitHubClient } from "../src/util/createGitHubClient.js";
 
 type NPMWebhook = {
     event: string
