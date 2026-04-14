@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  NODE_VERSION: '22.x'
   RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
   FUNCTION_APP_NAME: TypeScriptReposAutomation2
   STORAGE_ACCOUNT_NAME: typescriptreposauto997e
@@ -33,7 +33,12 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-          npm prune --production
+
+      - name: Bundle
+        run: npm run bundle
+
+      - name: Smoke test
+        run: GITHUB_TOKEN=secret node dist/functions/index.js
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -42,8 +47,7 @@ jobs:
           path: |
             host.json
             package.json
-            node_modules
-            dist
+            dist/functions/index.js
 
   deploy:
     runs-on:

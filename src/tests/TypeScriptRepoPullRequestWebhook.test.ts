@@ -3,7 +3,7 @@ vi.mock("../anyRepoHandlePullRequest.js", () => ({ handlePullRequestPayload: vi.
 vi.mock("../anyRepoHandleIssueComment.js", () => ({ anyRepoHandleIssueCommentPayload: vi.fn() }))
 vi.mock("../anyRepoHandleIssue.js", () => ({ handleIssuePayload: vi.fn() }))
 
-import webhook from "../../functions/TypeScriptRepoPullRequestWebhook.js"
+import webhook from "../functions/TypeScriptRepoPullRequestWebhook.js"
 import { handlePullRequestPayload } from "../anyRepoHandlePullRequest.js"
 import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment.js"
 import { HttpRequest, InvocationContext } from "@azure/functions"

@@ -1,9 +1,9 @@
 import { app, HttpHandler } from "@azure/functions"
 
-import { handlePullRequestPayload } from "../src/anyRepoHandlePullRequest.js";
-import { anyRepoHandleIssueCommentPayload } from "../src/anyRepoHandleIssueComment.js";
-import { handleIssuePayload } from "../src/anyRepoHandleIssue.js";
-import { verifyGitHubWebhook } from "../src/util/verifyWebhook.js";
+import { handlePullRequestPayload } from "../anyRepoHandlePullRequest.js";
+import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment.js";
+import { handleIssuePayload } from "../anyRepoHandleIssue.js";
+import { verifyGitHubWebhook } from "../util/verifyWebhook.js";
 
 
 // The goal of these functions is to validate the call is real, then as quickly as possible get out of the azure
