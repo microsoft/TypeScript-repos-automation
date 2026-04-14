@@ -2,9 +2,12 @@
   "extends": ["@tsconfig/node22", "@tsconfig/strictest"],
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "src",
     "sourceMap": true,
     "strict": true,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
+    "types": ["node"],
+    "module": "preserve",
+    "moduleResolution": "bundler"
   }
 }

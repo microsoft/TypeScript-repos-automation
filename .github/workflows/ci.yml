@@ -18,4 +18,8 @@ jobs:
     - run: npm install
     - run: npm run build
     - run: npm test
+    - run: npm run bundle
+    - run: node dist/functions/index.js
+      env:
+        GITHUB_TOKEN: secret
     - run: npx knip

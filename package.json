@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "type": "module",
   "engines": {
     "node": ">=22"
   },
-  "main": "dist/functions/*.js",
+  "main": "dist/functions/index.js",
   "scripts": {
     "build": "tsc",
     "postinstall": "node scripts/printSHA.js",
+    "bundle": "esbuild --bundle --platform=node --format=cjs --target=node22 --external:@azure/functions-core --outfile=dist/functions/index.js src/functions/index.ts",
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
@@ -26,8 +26,9 @@
     "@tsconfig/node22": "^22.0.5",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.13",
+    "esbuild": "^0.28.0",
     "knip": "^5.85.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vitest": "^4.0.18"
   },
   "packageManager": "npm@11.11.0+sha512.f36811c4aae1fde639527368ae44c571d050006a608d67a191f195a801a52637a312d259186254aa3a3799b05335b7390539cf28656d18f0591a1125ba35f973"

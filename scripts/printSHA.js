@@ -1,5 +1,5 @@
-import { execSync } from 'child_process'
-import { writeFileSync } from 'fs'
+const { execSync } = require('child_process')
+const { writeFileSync } = require('fs')
 
 const sha = execSync('git rev-parse HEAD').toString().trim()
 

@@ -1,5 +1,6 @@
 import { app, HttpHandler } from "@azure/functions"
-import { createGitHubClient } from "../src/util/createGitHubClient.js";
+import crypto from "node:crypto";
+import { createGitHubClient } from "../util/createGitHubClient.js";
 
 type NPMWebhook = {
     event: string
@@ -12,11 +13,10 @@ type NPMWebhook = {
     }
 }
 
-const crypto  = require('crypto');
 const httpTrigger: HttpHandler = async function (req, _context) {
     const bodyText = await req.text();
     const expectedSignature = crypto
-        .createHmac('sha256', process.env.NPM_HOOK_SECRET)
+        .createHmac('sha256', process.env.NPM_HOOK_SECRET!)
         .update(bodyText)
         .digest('hex');
 
