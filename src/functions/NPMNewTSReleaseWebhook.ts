@@ -28,7 +28,7 @@ const httpTrigger: HttpHandler = async function (req, _context) {
     const tag = webhook.change.version
     const isProd = !tag.includes("-dev")
     if (isProd) {
-        const gh = createGitHubClient()
+        const gh = await createGitHubClient("microsoft", "Make-Monaco-Builds")
         const masterRef = await gh.repos.getBranch({ owner: "microsoft", repo: "Make-Monaco-Builds", branch: "master" })
         await gh.git.createTag({ owner: "microsoft", repo: "Make-Monaco-Builds", tag: tag, message: "Auto-generated from TS webhooks", type: "commit", object: masterRef.data.commit.sha })
         return {

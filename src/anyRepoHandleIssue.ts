@@ -8,7 +8,7 @@ import { createGitHubClient } from "./util/createGitHubClient.js"
 import { Logger } from "./util/logger.js"
 
 export const handleIssuePayload = async (payload: IssuesEvent, context: InvocationContext): Promise<HttpResponseInit> => {
-  const api = createGitHubClient()
+  const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
   const run = (
