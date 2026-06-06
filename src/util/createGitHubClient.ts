@@ -44,7 +44,7 @@ function defaultPermissions(repo: string): Permissions {
   return {
     contents: "write",
     issues: "write",
-    pull_requests: "read",
+    pull_requests: "write",
   };
 }
 
