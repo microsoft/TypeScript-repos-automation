@@ -1,5 +1,7 @@
 import { app, HttpHandler } from "@azure/functions"
 import crypto from "node:crypto";
+
+/*
 import { createGitHubClient } from "../util/createGitHubClient.js";
 
 type NPMWebhook = {
@@ -12,6 +14,7 @@ type NPMWebhook = {
         version: string
     }
 }
+*/
 
 const httpTrigger: HttpHandler = async function (req, _context) {
     const bodyText = await req.text();
