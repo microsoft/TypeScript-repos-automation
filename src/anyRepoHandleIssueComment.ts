@@ -7,7 +7,7 @@ import { addReprosLabelOnComments } from "./checks/addReprosLabel.js"
 import { Logger } from "./util/logger.js"
 
 export const anyRepoHandleIssueCommentPayload = async (payload: IssueCommentEvent, context: InvocationContext): Promise<HttpResponseInit> => {
-  const api = createGitHubClient()
+  const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
   const run = (

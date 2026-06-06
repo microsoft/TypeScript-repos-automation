@@ -11,9 +11,10 @@ import { isMemberOfTSTeam } from "./pr_meta/isMemberOfTSTeam.js"
 import { getRelatedIssues } from "./pr_meta/getRelatedIssues.js"
 import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { Logger } from "./util/logger.js"
+import { isTypeScriptBot } from "./util/botUsers.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
-  const api = createGitHubClient()
+  const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
   const run = (
@@ -64,7 +65,7 @@ const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: L
   return {
     thisIssue,
     authorIsMemberOfTSTeam,
-    authorIsBot: payload.pull_request.user.login === "typescript-bot"
+    authorIsBot: isTypeScriptBot(payload.pull_request.user.login)
       || payload.pull_request.user.login === "csigs"
       || payload.pull_request.user.type === "Bot",
     relatedIssues,

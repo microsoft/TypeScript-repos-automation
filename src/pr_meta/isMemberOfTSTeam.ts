@@ -1,10 +1,11 @@
 import { Octokit } from "@octokit/rest"
 import { Logger } from "../util/logger.js"
+import { isTypeScriptBot } from "../util/botUsers.js"
 let cachedTSTeam: string[] = []
 
 /** Checks if someone is a member of a team, and always bails with TS bot */
 export const isMemberOfTSTeam = async (username: string, api: Octokit, _log: Logger) => {
-  if (username === "typescript-bot") return false
+  if (isTypeScriptBot(username)) return false
   // Keep a cache so that it's only grabbed every so often
   if (cachedTSTeam.length) {
     return cachedTSTeam.includes(username)
