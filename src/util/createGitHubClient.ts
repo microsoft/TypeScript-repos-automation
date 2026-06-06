@@ -38,7 +38,7 @@ function getGitHubAuth() {
 }
 
 function defaultPermissions(repo: string): Permissions {
-  if (repo === "Make-Monaco-Builds") {
+  if (repo === "TypeScript-Make-Monaco-Builds") {
     return { contents: "write" };
   }
   return {
