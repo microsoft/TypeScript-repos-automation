@@ -28,7 +28,7 @@
     "@tsconfig/node22": "^22.0.5",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.13",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "knip": "^5.85.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.0"
