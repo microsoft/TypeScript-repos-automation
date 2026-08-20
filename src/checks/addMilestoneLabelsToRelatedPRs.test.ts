@@ -77,6 +77,7 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
       issue_number: 1234,
       labels: ["For Milestone Bug"],
     });
+    expect(mockAPI.issues.addLabels).toHaveBeenCalledTimes(1);
   });
 
   it("Adds 'For Backlog Bug' label if milestone is Backlog", async () => {
@@ -94,25 +95,6 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
       repo: payload.repository.name,
       issue_number: 1234,
       labels: ["For Backlog Bug"],
-    });
-  });
-
-  it("Adds 'Fix Available' label to the issue if appropriate", async () => {
-    const { mockAPI, api } = createMockGitHubClient();
-    const payload: IssuesEvent = getIssueFixture("milestoned");
-    payload.action = "milestoned";
-    payload.issue.milestone!.title = "TypeScript 5.8.0";
-    payload.issue.labels = [];
-
-    mockAPI.graphql.mockResolvedValue(getRelatedPRMock());
-
-    await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
-
-    expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      issue_number: payload.issue.number,
-      labels: ["Fix Available"],
     });
   });
 

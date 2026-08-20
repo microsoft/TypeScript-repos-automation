@@ -65,15 +65,4 @@ export const addMilestoneLabelsToRelatedPRs = async (
       labels,
     });
   }
-
-  if (houseKeepingLabels["For Milestone Bug"]) {
-    if (!issue.labels?.find((l) => l.name === "Fix Available")) {
-      await api.issues.addLabels({
-        owner: repo.owner.login,
-        repo: repo.name,
-        issue_number: issue.number,
-        labels: ["Fix Available"],
-      });
-    }
-  }
 };

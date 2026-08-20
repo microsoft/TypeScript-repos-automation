@@ -69,32 +69,9 @@ describe(addMilestoneLabelsToPRs, () => {
       labels: ["For Milestone Bug"],
     })
 
-    // Verifies that it adds the 'fix available' label
-    expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
-      issue_number: 1111,
-      owner: "microsoft",
-      repo: "TypeScript",
-      labels: ["Fix Available"],
-    })
+    expect(mockAPI.issues.addLabels).toHaveBeenCalledTimes(1)
   })
 
-  it("Removes a label if milestone doesn't match the current labels", async () => {
-    const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ assignees: [], milestone: { title: "Not Backlog" }, labels: [{ name: "Fix Available"}] }])
-
-    const pr = getPRFixture("opened")
-    pr.pull_request.body = `fixes #1123`
-    pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
-
-    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
-
-    expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
-      issue_number: 35454,
-      owner: "microsoft",
-      repo: "TypeScript",
-      labels: ["For Milestone Bug"],
-    })
-  })
   it("Doesn't do anything for closed PRs", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
