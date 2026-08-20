@@ -11,7 +11,7 @@ import { Label } from "@octokit/webhooks-types"
 describe(addCommentToUncommittedPRs, () => {
   it("Adds a comment to an uncommented, unlinked PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockAPI.issues.listComments.mockResolvedValue({ data: [] })
+    mockAPI.paginate.mockResolvedValue([])
     const pr = getPRFixture("opened")
     pr.pull_request.body = "Cool Ghosts"
 
@@ -41,6 +41,7 @@ describe(addCommentToUncommittedPRs, () => {
 
   it("Adds a comment to an uncommented PR linked to uncommitted suggestion", async () => {
     const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.paginate.mockResolvedValue([])
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1`
@@ -54,6 +55,24 @@ describe(addCommentToUncommittedPRs, () => {
       repo: "TypeScript",
       body: "The TypeScript team hasn't accepted the linked issue #1. If you can get it accepted, this PR will have a better chance of being reviewed."
     })
+  })
+
+  it("Adds only one comment when checks for the same PR run concurrently", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    const comments: { body: string }[] = []
+    mockAPI.paginate.mockImplementation(async () => comments)
+    mockAPI.issues.createComment.mockImplementation(async ({ body }) => {
+      comments.push({ body })
+    })
+
+    const pr = getPRFixture("opened")
+    const info = createPRInfo()
+    await Promise.all([
+      addCommentToUncommittedPRs(api, pr, getFakeLogger(), info),
+      addCommentToUncommittedPRs(api, pr, getFakeLogger(), info),
+    ])
+
+    expect(mockAPI.issues.createComment).toHaveBeenCalledTimes(1)
   })
 
   it("Does not add a comment to an uncommented PR linked to an uncommitted suggestion from the TS team", async () => {
