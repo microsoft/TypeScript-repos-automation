@@ -1,7 +1,5 @@
 import { app, HttpHandler } from "@azure/functions"
-
 import { handlePullRequestPayload } from "../anyRepoHandlePullRequest.js";
-import { anyRepoHandleIssueCommentPayload } from "../anyRepoHandleIssueComment.js";
 import { handleIssuePayload } from "../anyRepoHandleIssue.js";
 import { verifyGitHubWebhook } from "../util/verifyWebhook.js";
 
@@ -22,15 +20,11 @@ const httpTrigger: HttpHandler = async function (request, context) {
 
   // https://github.com/microsoft/TypeScript/settings/hooks/163309719
 
-  const event = request.headers.get("x-github-event") as "pull_request" | "status" | "issue_comment" | "issues";
+  const event = request.headers.get("x-github-event") as "pull_request" | "issues";
 
   switch (event) {
     case "pull_request":
       return handlePullRequestPayload(body, context);
-
-
-    case "issue_comment":
-      return anyRepoHandleIssueCommentPayload(body, context)
 
     case "issues":
       return handleIssuePayload(body, context)
