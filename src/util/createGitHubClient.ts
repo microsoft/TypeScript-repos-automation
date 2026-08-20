@@ -37,10 +37,7 @@ function getGitHubAuth() {
   return githubAuth;
 }
 
-function defaultPermissions(repo: string): Permissions {
-  if (repo === "TypeScript-Make-Monaco-Builds") {
-    return { contents: "write" };
-  }
+function defaultPermissions(): Permissions {
   return {
     contents: "write",
     issues: "write",
@@ -48,7 +45,7 @@ function defaultPermissions(repo: string): Permissions {
   };
 }
 
-export async function createGitHubClient(owner = "microsoft", repo = "TypeScript", permissions = defaultPermissions(repo)) {
+export async function createGitHubClient(owner = "microsoft", repo = "TypeScript", permissions = defaultPermissions()) {
   const cacheKey = JSON.stringify({ owner, repo, permissions });
   const token = await getGitHubAuth().getToken({
     owner,

@@ -2,7 +2,7 @@ import { vi } from "vitest"
 import { Octokit } from "@octokit/rest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
-import { IssueCommentEvent, IssuesEvent, PullRequestEvent } from "@octokit/webhooks-types"
+import { IssuesEvent, PullRequestEvent } from "@octokit/webhooks-types"
 
 /**
  * Creates a version of the GitHub API client where API calls
@@ -25,8 +25,7 @@ export const createMockGitHubClient = () => {
     repos: {
       checkCollaborator: vi.fn(),
       getContent: vi.fn(),
-      getCombinedStatusForRef: vi.fn(),
-      createDispatchEvent: vi.fn()
+      getCombinedStatusForRef: vi.fn()
     },
     issues: {
       addAssignees: vi.fn(),
@@ -84,7 +83,6 @@ export const createFakeGitHubClient = () => {
       checkCollaborator: Promise.resolve({}),
       getContent: Promise.resolve({}),
       getCombinedStatusForRef: Promise.resolve({}),
-      createDispatchEvent: Promise.resolve({}),
     },
     issues: {
       addAssignees: Promise.resolve({}),
@@ -133,7 +131,3 @@ export const getPRFixture = (fixture: "closed" | "opened" | "api-pr-closed"): Pu
 /** Grabs a known issue fixture */
 export const getIssueFixture = (fixture: "opened" | "labeled" | "milestoned"): IssuesEvent =>
   JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issues", fixture + ".json"), "utf8"))
-
-  /** Grabs a known issue fixture */
-export const getIssueCommentFixture = (fixture: "created"): IssueCommentEvent =>
-JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "fixtures", "issue_comments", fixture + ".json"), "utf8"))
