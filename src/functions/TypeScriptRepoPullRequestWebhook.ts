@@ -20,7 +20,7 @@ const httpTrigger: HttpHandler = async function (request, context) {
 
   // https://github.com/microsoft/TypeScript/settings/hooks/163309719
 
-  const event = request.headers.get("x-github-event") as "pull_request" | "status" | "issues";
+  const event = request.headers.get("x-github-event") as "pull_request" | "issues";
 
   switch (event) {
     case "pull_request":

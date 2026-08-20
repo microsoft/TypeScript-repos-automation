@@ -52,7 +52,7 @@ brew install azure-functions-core-tools
 Then you can use curl to send GitHub webhook JSON fixtures to the server:
 
 ```sh
-curl -d "@fixtures/issues/created.json" -X POST http://localhost:7071/api/TypeScriptRepoIssueWebhook
+curl -d "@fixtures/issues/opened.json" -X POST http://localhost:7071/api/TypeScriptRepoIssueWebhook
 ```
 
 While developing, you can use the `createFakeGitHubClient` to mock out the API with the responses you expect:
