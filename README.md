@@ -3,20 +3,25 @@
 * __State:__ In Production
 * __Dashboard:__ [Azure](https://portal.azure.com/#@72f988bf-86f1-41af-91ab-2d7cd011db47/resource/subscriptions/57bfeeed-c34a-4ffd-a06b-ccff27ac91b8/resourceGroups/typescriptreposautomatio/providers/Microsoft.Web/sites/TypeScriptReposAutomation)
 
-## Current Checks
+## Current Automation
 
 #### Pull Requests
 
-- Adds a label for any new PR by a core team member
-- Assigns a core team member to their own PR if no-one is assigned
+- Adds `Author: Team` to open PRs from TypeScript team members
+- Assigns a TypeScript team member to their own PR when no one is assigned
+- Assigns unassigned PRs to the assignees of issues they close
+- Classifies PRs as `For Milestone Bug`, `For Backlog Bug`, or `For Uncommitted Bug`
+- Guides external contributors when a PR has no linked issue or closes an unaccepted suggestion
 
 #### Issues
 
-- NOOP for now, but set up
+- Updates the milestone classification of related PRs when an open issue is added to a milestone
+
+Automation is restricted to `microsoft/TypeScript`.
 
 ## Setup
 
-This repo represents a single Azure "Function App" - which is an app which hosts many functions. 
+This repo represents a single Azure Function App. Its webhook endpoint handles both GitHub pull request and issue events.
 
 ```sh
 # Clone
@@ -52,7 +57,7 @@ brew install azure-functions-core-tools
 Then you can use curl to send GitHub webhook JSON fixtures to the server:
 
 ```sh
-curl -d "@fixtures/issues/opened.json" -X POST http://localhost:7071/api/TypeScriptRepoIssueWebhook
+curl -d "@fixtures/issues/opened.json" -H "x-github-event: issues" -X POST http://localhost:7071/api/TypeScriptRepoPullRequestWebhook
 ```
 
 While developing, you can use the `createFakeGitHubClient` to mock out the API with the responses you expect:
@@ -77,9 +82,8 @@ export const handlePullRequestPayload = async (payload: WebhookPayloadPullReques
 
 # Deployment
 
-PR's are automatically deployed when merged via GitHub Actions. 
-If you'd like to manually deploy, you can use `npm run deploy`. Note: a manual deploy will nuke your `node_modules`.
- 
+Changes are automatically deployed from `master` by GitHub Actions. The deployment workflow can also be dispatched manually.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
