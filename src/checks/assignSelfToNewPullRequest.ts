@@ -1,13 +1,13 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { isMemberOfTSTeam } from "../pr_meta/isMemberOfTSTeam.js"
+import type { PRInfo } from "../anyRepoHandlePullRequest.js"
 import { Logger } from "../util/logger.js"
 
 /**
  * If the PR comes from a core contributor, set themselves to be the assignee
  * if one isn't set during the creation of the PR.
  */
-export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
+export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequestEvent, logger: Logger, info: PRInfo) => {
   const { repository: repo, pull_request } = payload
   if (pull_request.state === "closed") {
     return logger.info("Skipping because the pull request is already closed")
@@ -25,9 +25,7 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequ
     issue_number: pull_request.number,
   }
 
-  // Check the access level of the user
-  const isTeamMember = await isMemberOfTSTeam(author.login, api, logger)
-  if (isTeamMember) {
+  if (info.authorIsMemberOfTSTeam) {
     logger.info(`Adding ${author.login} as the assignee`)
     await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] })
   } else {
