@@ -8,6 +8,9 @@ import { Logger } from "../util/logger.js"
  */
 export const assignTeamMemberForRelatedPR = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
   const { repository: repo, pull_request } = payload
+  if (pull_request.state === "closed") {
+    return logger.info("Skipping because the pull request is already closed")
+  }
   if (pull_request.assignees.length > 0) {
     return logger.info("Skipping because there are assignees already")
   }

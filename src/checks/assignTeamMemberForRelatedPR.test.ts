@@ -10,6 +10,14 @@ import { User } from "@octokit/webhooks-types"
 const mockGetRelatedIssues = (getRelatedIssues as any) as Mock
 
 describe(assignTeamMemberForRelatedPR, () => {
+  it("does not assign closed pull requests", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+
+    await assignTeamMemberForRelatedPR(api, getPRFixture("closed"), getFakeLogger())
+
+    expect(mockAPI.issues.addAssignees).not.toHaveBeenCalled()
+  })
+
   it("NO-OPs when there's assignees already ", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const pr = getPRFixture("opened")

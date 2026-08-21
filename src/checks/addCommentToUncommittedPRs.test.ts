@@ -9,6 +9,14 @@ import { createPRInfo } from "../util/tests/createPRInfo.js"
 import { Label } from "@octokit/webhooks-types"
 
 describe(addCommentToUncommittedPRs, () => {
+  it("does not comment on closed pull requests", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+
+    await addCommentToUncommittedPRs(api, getPRFixture("closed"), getFakeLogger(), createPRInfo())
+
+    expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
+  })
+
   it("Adds a comment to an uncommented, unlinked PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     mockAPI.paginate.mockResolvedValue([])
