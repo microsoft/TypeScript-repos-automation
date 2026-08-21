@@ -78,7 +78,13 @@ export const getRelatedPRs = async (
       prs.push({ number: edge.node.number, labels });
     }
 
-    cursor = connection.pageInfo.hasNextPage ? connection.pageInfo.endCursor : null;
+    if (!connection.pageInfo.hasNextPage) {
+      cursor = null;
+    } else if (connection.pageInfo.endCursor) {
+      cursor = connection.pageInfo.endCursor;
+    } else {
+      throw new Error("GitHub returned another related-PR page without a cursor");
+    }
   } while (cursor);
 
   return prs;

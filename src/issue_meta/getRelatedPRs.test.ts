@@ -39,4 +39,14 @@ describe(getRelatedPRs, () => {
     expect(mockAPI.graphql).toHaveBeenCalledTimes(2)
     expect(mockAPI.issues.get).toHaveBeenCalledTimes(2)
   })
+
+  it("rejects an incomplete pagination response", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.graphql.mockResolvedValue(response(100, true, null))
+    mockAPI.issues.get.mockResolvedValue({ data: { labels: [] } })
+
+    await expect(getRelatedPRs("microsoft", "TypeScript", 1, api)).rejects.toThrow(
+      "GitHub returned another related-PR page without a cursor"
+    )
+  })
 })
