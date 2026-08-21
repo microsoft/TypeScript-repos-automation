@@ -15,6 +15,17 @@ import { isTypeScriptBot } from "./util/botUsers.js"
 import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
+  if (
+    !isTypeScriptRepo(payload.repository.owner.login, payload.repository.name)
+    || payload.pull_request.state === "closed"
+  ) {
+    return {
+      status: 200,
+      headers: { sha },
+      body: "Success, NOOP",
+    }
+  }
+
   const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
@@ -28,15 +39,13 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
     return fn(api, payload, context, pr)
   }
 
-  if (isTypeScriptRepo(payload.repository.owner.login, payload.repository.name)) {
-    const pr = await generatePRInfo(api, payload, context)
+  const pr = await generatePRInfo(api, payload, context)
 
-    await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
-    await run("Add a core team label to PRs", addLabelForTeamMember, pr)
-    await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR, pr)
-    await run("Adding milestone related labels", addMilestoneLabelsToPRs, pr)
-    await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs, pr)
-  }
+  await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
+  await run("Add a core team label to PRs", addLabelForTeamMember, pr)
+  await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR, pr)
+  await run("Adding milestone related labels", addMilestoneLabelsToPRs, pr)
+  await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs, pr)
 
   return {
     status: 200,
