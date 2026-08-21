@@ -98,6 +98,29 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
     });
   });
 
+  it("replaces a stale milestone classification label", async () => {
+    const { mockAPI, api } = createMockGitHubClient();
+    const payload: IssuesEvent = getIssueFixture("milestoned");
+    payload.issue.milestone!.title = "TypeScript 5.8.0";
+
+    mockAPI.graphql.mockResolvedValue(getRelatedPRMock(["For Backlog Bug"]));
+
+    await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
+
+    expect(mockAPI.issues.removeLabel).toHaveBeenCalledWith({
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      issue_number: 1234,
+      name: "For Backlog Bug",
+    });
+    expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      issue_number: 1234,
+      labels: ["For Milestone Bug"],
+    });
+  });
+
   it("Skips when no new labels need to be added", async () => {
     const { mockAPI, api } = createMockGitHubClient();
     const payload: IssuesEvent = getIssueFixture("milestoned");

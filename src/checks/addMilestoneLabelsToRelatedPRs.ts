@@ -21,7 +21,6 @@ export const addMilestoneLabelsToRelatedPRs = async (
     "For Backlog Bug": false,
   };
 
-  type HouseKeepingKeys = keyof typeof houseKeepingLabels;
   /**
    * For Milestone Bug -- fixes an issue that's in a version milestone, or assigned to a team member
    * For Backlog Bug -- fixes an issue that's in the Backlog milestone.
@@ -34,9 +33,8 @@ export const addMilestoneLabelsToRelatedPRs = async (
     houseKeepingLabels["For Backlog Bug"] = true;
   }
 
-  const labelsNeedingToAdd = Object.keys(houseKeepingLabels).filter(
-    (l) => houseKeepingLabels[l as HouseKeepingKeys]
-  );
+  const desiredLabel = Object.entries(houseKeepingLabels).find(([, enabled]) => enabled)![0];
+  const houseKeepingLabelNames = [...Object.keys(houseKeepingLabels), "For Uncommitted Bug"];
 
   const prs = await getRelatedPRs(
     repo.owner.login,
@@ -46,23 +44,24 @@ export const addMilestoneLabelsToRelatedPRs = async (
   );
 
   for (const pr of prs) {
-    const labels = labelsNeedingToAdd.filter((l) => !pr.labels.includes(l));
-    if (!labels.length) {
-      continue;
-    }
-    if (pr.labels.includes("For Uncommitted Bug")) {
+    const labelsToRemove = houseKeepingLabelNames.filter(
+      (label) => label !== desiredLabel && pr.labels.includes(label)
+    );
+    for (const label of labelsToRemove) {
       await api.issues.removeLabel({
         owner: repo.owner.login,
         repo: repo.name,
         issue_number: pr.number,
-        name: "For Uncommitted Bug",
+        name: label,
       });
     }
-    await api.issues.addLabels({
-      owner: repo.owner.login,
-      repo: repo.name,
-      issue_number: pr.number,
-      labels,
-    });
+    if (!pr.labels.includes(desiredLabel)) {
+      await api.issues.addLabels({
+        owner: repo.owner.login,
+        repo: repo.name,
+        issue_number: pr.number,
+        labels: [desiredLabel],
+      });
+    }
   }
 };
