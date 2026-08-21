@@ -54,4 +54,27 @@ describe(assignTeamMemberForRelatedPR, () => {
       repo: "TypeScript",
     })
   })
+
+  it("deduplicates assignees shared by related issues", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+
+    await assignTeamMemberForRelatedPR(
+      api,
+      getPRFixture("opened"),
+      getFakeLogger(),
+      createPRInfo({
+        relatedIssues: [
+          { assignees: [{ login: "danger" }] },
+          { assignees: [{ login: "danger" }] },
+        ] as any,
+      })
+    )
+
+    expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
+      assignees: ["danger"],
+      issue_number: 35454,
+      owner: "microsoft",
+      repo: "TypeScript",
+    })
+  })
 })

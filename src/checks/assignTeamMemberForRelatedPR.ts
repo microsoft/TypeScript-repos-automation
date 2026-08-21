@@ -19,15 +19,21 @@ export const assignTeamMemberForRelatedPR = async (api: Octokit, payload: PullRe
     return logger.info("Skipping because there are no related issues")
   }
 
-  const assignees: string[] = []
+  const assignees = new Set<string>()
   for (const issue of info.relatedIssues) {
     for (const issueAssignee of issue.assignees ?? []) {
-        assignees.push(issueAssignee.login)
+        assignees.add(issueAssignee.login)
     }
   }
 
-  if (assignees.length) {
-    logger.info(`Adding ${assignees.join(", ")} as assignees`)
-    await api.issues.addAssignees({ repo: repo.name, issue_number: pull_request.number, owner: repo.owner.login, assignees })
+  if (assignees.size) {
+    const uniqueAssignees = [...assignees]
+    logger.info(`Adding ${uniqueAssignees.join(", ")} as assignees`)
+    await api.issues.addAssignees({
+      repo: repo.name,
+      issue_number: pull_request.number,
+      owner: repo.owner.login,
+      assignees: uniqueAssignees,
+    })
   } 
 }
