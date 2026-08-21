@@ -5,6 +5,7 @@ import { sha } from "./sha.js"
 import { addMilestoneLabelsToRelatedPRs } from "./checks/addMilestoneLabelsToRelatedPRs.js";
 import { createGitHubClient } from "./util/createGitHubClient.js"
 import { Logger } from "./util/logger.js"
+import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
 
 export const handleIssuePayload = async (payload: IssuesEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
@@ -18,7 +19,7 @@ export const handleIssuePayload = async (payload: IssuesEvent, context: Invocati
     ran.push(name)
     return fn(api, payload, context)
   }
-  if (payload.repository.name === "TypeScript") {
+  if (isTypeScriptRepo(payload.repository.owner.login, payload.repository.name)) {
     await run("Adding milestone labels to related PRs", addMilestoneLabelsToRelatedPRs)
   }
 

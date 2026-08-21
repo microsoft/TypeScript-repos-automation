@@ -12,6 +12,7 @@ import { getRelatedIssues } from "./pr_meta/getRelatedIssues.js"
 import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { Logger } from "./util/logger.js"
 import { isTypeScriptBot } from "./util/botUsers.js"
+import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
@@ -27,7 +28,7 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
     return fn(api, payload, context, pr)
   }
 
-  if (payload.repository.name === "TypeScript") {
+  if (isTypeScriptRepo(payload.repository.owner.login, payload.repository.name)) {
     const pr = await generatePRInfo(api, payload, context)
 
     await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
