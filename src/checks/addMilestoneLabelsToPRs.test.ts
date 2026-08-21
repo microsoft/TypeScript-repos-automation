@@ -1,23 +1,21 @@
-import { vi, describe, it, expect, Mock } from "vitest"
-vi.mock("../pr_meta/getRelatedIssues.js")
+import { describe, it, expect } from "vitest"
 
 import { addMilestoneLabelsToPRs } from "./addMilestoneLabelsToPRs.js"
 import { createMockGitHubClient, getPRFixture } from "../util/tests/createMockGitHubClient.js"
 import { getFakeLogger } from "../util/tests/createMockContext.js"
-
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
+import { createPRInfo } from "../util/tests/createPRInfo.js"
 import { Label } from "@octokit/webhooks-types"
-const mockGetRelatedIssues = (getRelatedIssues as any) as Mock
 
 describe(addMilestoneLabelsToPRs, () => {
   it("Keeps existing labels from the PR", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
 
     const pr = getPRFixture("opened")
     pr.pull_request.labels = [{ name: "Something" } as Partial<Label> as Label, { name: "Other" } as Partial<Label> as Label]
 
-    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
+    await addMilestoneLabelsToPRs(api, pr, getFakeLogger(), createPRInfo({
+      relatedIssues: [{ assignees: [] }] as any,
+    }))
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
       issue_number: 35454,
@@ -30,12 +28,13 @@ describe(addMilestoneLabelsToPRs, () => {
 
   it("Makes the PR Uncommitted", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
 
-    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
+    await addMilestoneLabelsToPRs(api, pr, getFakeLogger(), createPRInfo({
+      relatedIssues: [{ assignees: [] }] as any,
+    }))
 
     expect(mockAPI.issues.addLabels).toHaveBeenCalledWith({
       issue_number: 35454,
@@ -47,13 +46,14 @@ describe(addMilestoneLabelsToPRs, () => {
 
   it("Removes a label if milestone doesn't match the current labels", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ number: 1111, assignees: [], milestone: { title: "Not Backlog" }, labels: [] }])
 
     const pr = getPRFixture("opened")
     pr.pull_request.body = `fixes #1123`
     pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
 
-    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
+    await addMilestoneLabelsToPRs(api, pr, getFakeLogger(), createPRInfo({
+      relatedIssues: [{ number: 1111, assignees: [], milestone: { title: "Not Backlog" }, labels: [] }] as any,
+    }))
 
     expect(mockAPI.issues.removeLabel).toHaveBeenCalledWith({
       issue_number: 35454,
@@ -74,12 +74,11 @@ describe(addMilestoneLabelsToPRs, () => {
 
   it("Doesn't do anything for closed PRs", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    mockGetRelatedIssues.mockResolvedValue([{ assignees: [] }])
 
     const pr = getPRFixture("closed")
     pr.pull_request.body = `fixes #1123`
 
-    await addMilestoneLabelsToPRs(api, pr, getFakeLogger())
+    await addMilestoneLabelsToPRs(api, pr, getFakeLogger(), createPRInfo())
 
     expect(mockAPI.issues.addLabels).not.toHaveBeenCalled()
   })

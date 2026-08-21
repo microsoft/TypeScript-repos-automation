@@ -1,19 +1,17 @@
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import { Octokit } from "@octokit/rest"
-import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js"
+import type { PRInfo } from "../anyRepoHandlePullRequest.js"
 import { Logger } from "../util/logger.js"
 
 /**
  * Keep track of the milestone related PRs which are based on linked issues in the PR body
  */
-export const addMilestoneLabelsToPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger) => {
+export const addMilestoneLabelsToPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger, info: PRInfo) => {
   const { repository: repo, pull_request } = payload
 
   if (pull_request.state === "closed") {
     return logger.info(`Skipping because the pull request is already closed.`)
   }
-
-  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
 
   const houseKeepingLabels = {
     "For Milestone Bug": false,
@@ -28,7 +26,7 @@ export const addMilestoneLabelsToPRs = async (api: Octokit, payload: PullRequest
    * For Backlog Bug -- fixes an issue that's in the Backlog milestone.
    * For Uncommitted Bug -- any other PR.
    */
-  for (const issue of relatedIssues) {
+  for (const issue of info.relatedIssues) {
     const milestone = issue.milestone
     if (milestone) {
       if (milestone.title !== "Backlog" || issue.assignees?.length) {
