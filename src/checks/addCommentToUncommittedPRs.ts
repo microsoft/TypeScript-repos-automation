@@ -47,7 +47,7 @@ const addCommentIfMissing = async (api: Octokit, info: PRInfo, message: string) 
  * Comment on new PRs that don't have linked issues, or link to uncommitted issues.
  */
 export const addCommentToUncommittedPRs = async (api: Octokit, payload: PullRequestEvent, logger: Logger, info: PRInfo) => {
-  if (payload.pull_request.merged || payload.pull_request.draft || info.authorIsMemberOfTSTeam || info.authorIsBot) {
+  if (payload.pull_request.state === "closed" || payload.pull_request.draft || info.authorIsMemberOfTSTeam || info.authorIsBot) {
     return logger.trace("Skipping") 
   }
 

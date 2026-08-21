@@ -37,5 +37,6 @@ const httpTrigger: HttpHandler = async function (request, context) {
 };
 
 app.http("TypeScriptRepoPullRequestWebhook", { handler: httpTrigger });
+app.http("TypeScriptRepoIssueWebhook", { handler: httpTrigger });
 
 export default httpTrigger;

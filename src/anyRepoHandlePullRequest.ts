@@ -12,8 +12,20 @@ import { getRelatedIssues } from "./pr_meta/getRelatedIssues.js"
 import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { Logger } from "./util/logger.js"
 import { isTypeScriptBot } from "./util/botUsers.js"
+import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
+  if (
+    !isTypeScriptRepo(payload.repository.owner.login, payload.repository.name)
+    || payload.pull_request.state === "closed"
+  ) {
+    return {
+      status: 200,
+      headers: { sha },
+      body: "Success, NOOP",
+    }
+  }
+
   const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
@@ -27,15 +39,13 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
     return fn(api, payload, context, pr)
   }
 
-  if (payload.repository.name === "TypeScript") {
-    const pr = await generatePRInfo(api, payload, context)
+  const pr = await generatePRInfo(api, payload, context)
 
-    await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
-    await run("Add a core team label to PRs", addLabelForTeamMember, pr)
-    await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR, pr)
-    await run("Adding milestone related labels", addMilestoneLabelsToPRs, pr)
-    await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs, pr)
-  }
+  await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
+  await run("Add a core team label to PRs", addLabelForTeamMember, pr)
+  await run("Assign core team to PRs which affect their issues", assignTeamMemberForRelatedPR, pr)
+  await run("Adding milestone related labels", addMilestoneLabelsToPRs, pr)
+  await run("Adding comment on uncommitted PRs", addCommentToUncommittedPRs, pr)
 
   return {
     status: 200,
@@ -60,7 +70,7 @@ const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: L
   const comments: RestEndpointMethodTypes["issues"]["listComments"]["response"]["data"] = await api.paginate(options)
 
   const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.pull_request.user.login, api, logger)
-  const relatedIssues = await getRelatedIssues(pull_request.body ?? "", repo.owner.login, repo.name, api)
+  const relatedIssues = await getRelatedIssues(repo.owner.login, repo.name, pull_request.number, api)
 
   return {
     thisIssue,

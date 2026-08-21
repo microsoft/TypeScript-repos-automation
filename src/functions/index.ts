@@ -1,2 +1,1 @@
-import "./TypeScriptRepoIssueWebhook.js";
-import "./TypeScriptRepoPullRequestWebhook.js";
+import "./TypeScriptRepoWebhook.js";

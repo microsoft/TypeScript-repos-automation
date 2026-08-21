@@ -1,53 +1,80 @@
 import { Octokit, RestEndpointMethodTypes } from "@octokit/rest"
 
-// https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords
-const closePrefixes = ["close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved"]
-
-export const getRelatedIssues = async (body: string, owner: string, name: string, api: Octokit) => {
-  const allFixedIssues = findIssuesInBody(body)
-  const ourIssues = constrainIssuesToBaseRepo(allFixedIssues, `${owner}/${name}`)
-  const issues: RestEndpointMethodTypes["issues"]["get"]["response"]["data"][] = []
-
-  for (const issueNumber of ourIssues) {
-    const response = await api.issues.get({ issue_number: Number(issueNumber), owner, repo: name })
-    if (response.status === 200) {
-      issues.push(response.data)
-    }
-  }
-  return issues
-}
-
-export const findIssuesInBody = (body: string) => {
-  const results: string[] = []
-  const lowerBody = body.toLowerCase()
-  closePrefixes.forEach(prefix => {
-    if (lowerBody.includes(prefix)) {
-      // https://regex101.com/r/sVT5QR/1
-      // closes #45
-      // closes: #45
-      // closes Microsoft/TypeScript#45
-      // closes: Microsoft/TypeScript#45
-      const regex = new RegExp(`${prefix}:? (\\S*)`, "g")
-      let match = regex.exec(lowerBody)
-      while (match != null) {
-        results.push(match[1]!)
-        match = regex.exec(lowerBody)
+interface ClosingIssuesResponse {
+  repository: {
+    pullRequest: {
+      closingIssuesReferences: {
+        nodes: {
+          number: number
+          repository: {
+            nameWithOwner: string
+          }
+        }[]
+        pageInfo: {
+          hasNextPage: boolean
+          endCursor: string | null
+        }
       }
     }
-  })
-
-  return results
+  }
 }
 
-export const constrainIssuesToBaseRepo = (issues: string[], baseRepo: string): string[] => {
-  const lowBase = baseRepo.toLowerCase()
-  const lowUrl = `https://github.com/${lowBase}/issues/`
+export const getRelatedIssues = async (owner: string, name: string, pullRequest: number, api: Octokit) => {
+  const issues: RestEndpointMethodTypes["issues"]["get"]["response"]["data"][] = []
+  let cursor: string | null = null
+
+  do {
+    const response: ClosingIssuesResponse = await api.graphql(
+      `
+      query getRelatedIssues($owner: String!, $repo: String!, $pullRequest: Int!, $cursor: String) {
+        repository(owner: $owner, name: $repo) {
+          pullRequest(number: $pullRequest) {
+            closingIssuesReferences(first: 100, after: $cursor, excludeUserLinked: true) {
+              nodes {
+                number
+                repository {
+                  nameWithOwner
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        }
+      }
+      `,
+      {
+        owner,
+        repo: name,
+        pullRequest,
+        cursor,
+      }
+    )
+
+    const connection = response.repository.pullRequest.closingIssuesReferences
+    for (const issue of connection.nodes) {
+      if (issue.repository.nameWithOwner.toLowerCase() !== `${owner}/${name}`.toLowerCase()) {
+        continue
+      }
+
+      const issueResponse = await api.issues.get({
+        issue_number: issue.number,
+        owner,
+        repo: name,
+      })
+      issues.push(issueResponse.data)
+    }
+
+    if (!connection.pageInfo.hasNextPage) {
+      cursor = null
+    } else if (connection.pageInfo.endCursor) {
+      cursor = connection.pageInfo.endCursor
+    } else {
+      throw new Error("GitHub returned another closing-issues page without a cursor")
+    }
+  } while (cursor)
+
   return issues
-    .map(r => {
-      if (r.startsWith("#")) return r.slice(1)
-      if (r.startsWith(lowBase)) return r.slice(lowBase.length + 1)
-      if (r.startsWith(lowUrl)) return r.slice(lowUrl.length)
-      return undefined
-    })
-    .filter(Boolean) as string[]
 }
