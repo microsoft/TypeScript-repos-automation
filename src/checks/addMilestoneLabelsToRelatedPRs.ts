@@ -2,39 +2,28 @@ import { IssuesEvent } from "@octokit/webhooks-types";
 import { Octokit } from "@octokit/rest";
 import { Logger } from "../util/logger.js";
 import { getRelatedPRs } from "../issue_meta/getRelatedPRs.js";
+import { getRelatedIssues } from "../pr_meta/getRelatedIssues.js";
+import { syncMilestoneLabels } from "./syncMilestoneLabels.js";
+
+const classificationActions = new Set<IssuesEvent["action"]>([
+  "milestoned",
+  "demilestoned",
+  "assigned",
+  "unassigned",
+]);
 
 export const addMilestoneLabelsToRelatedPRs = async (
   api: Octokit,
   payload: IssuesEvent,
   logger: Logger
 ) => {
-  if (payload.action !== "milestoned") {
-    return logger.info("Skipping because this action isn't adding a milestone");
+  if (!classificationActions.has(payload.action)) {
+    return logger.info("Skipping because this action doesn't affect milestone classification");
   }
   if (payload.issue.state !== "open") {
     return logger.info("Skipping because the issue is already closed");
   }
   const { repository: repo, issue } = payload;
-
-  const houseKeepingLabels = {
-    "For Milestone Bug": false,
-    "For Backlog Bug": false,
-  };
-
-  /**
-   * For Milestone Bug -- fixes an issue that's in a version milestone, or assigned to a team member
-   * For Backlog Bug -- fixes an issue that's in the Backlog milestone.
-   * For Uncommitted Bug -- any other PR.
-   */
-  const milestone = payload.issue.milestone!;
-  if (milestone.title !== "Backlog" || issue.assignees?.length) {
-    houseKeepingLabels["For Milestone Bug"] = true;
-  } else {
-    houseKeepingLabels["For Backlog Bug"] = true;
-  }
-
-  const desiredLabel = Object.entries(houseKeepingLabels).find(([, enabled]) => enabled)![0];
-  const houseKeepingLabelNames = [...Object.keys(houseKeepingLabels), "For Uncommitted Bug"];
 
   const prs = await getRelatedPRs(
     repo.owner.login,
@@ -44,24 +33,19 @@ export const addMilestoneLabelsToRelatedPRs = async (
   );
 
   for (const pr of prs) {
-    const labelsToRemove = houseKeepingLabelNames.filter(
-      (label) => label !== desiredLabel && pr.labels.includes(label)
+    const relatedIssues = await getRelatedIssues(
+      repo.owner.login,
+      repo.name,
+      pr.number,
+      api
     );
-    for (const label of labelsToRemove) {
-      await api.issues.removeLabel({
-        owner: repo.owner.login,
-        repo: repo.name,
-        issue_number: pr.number,
-        name: label,
-      });
-    }
-    if (!pr.labels.includes(desiredLabel)) {
-      await api.issues.addLabels({
-        owner: repo.owner.login,
-        repo: repo.name,
-        issue_number: pr.number,
-        labels: [desiredLabel],
-      });
-    }
+    await syncMilestoneLabels(
+      api,
+      repo.owner.login,
+      repo.name,
+      pr.number,
+      pr.labels,
+      relatedIssues
+    );
   }
 };
