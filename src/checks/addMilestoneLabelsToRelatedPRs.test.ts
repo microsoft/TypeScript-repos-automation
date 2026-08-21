@@ -10,21 +10,21 @@ import { IssuesEvent } from "@octokit/webhooks-types";
 import { getRelatedPRsResponseData } from "../issue_meta/getRelatedPRs.js";
 
 function getRelatedPRMock(
-  labels: string[] = ["For Uncommitted Bug"]
 ): getRelatedPRsResponseData {
   return {
     repository: {
       issue: {
         closedByPullRequestsReferences: {
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
           edges: [
             {
               node: {
                 number: 1234,
                 repository: {
                   nameWithOwner: "microsoft/TypeScript",
-                },
-                labels: {
-                  edges: labels.map((l) => ({ node: { name: l } })),
                 },
               },
             },
@@ -33,6 +33,15 @@ function getRelatedPRMock(
       },
     },
   };
+}
+
+const mockRelatedPR = (mockAPI: ReturnType<typeof createMockGitHubClient>["mockAPI"], labels = ["For Uncommitted Bug"]) => {
+  mockAPI.graphql.mockResolvedValue(getRelatedPRMock());
+  mockAPI.issues.get.mockResolvedValue({
+    data: {
+      labels: labels.map((name) => ({ name })),
+    },
+  });
 }
 
 describe("addMilestoneLabelsToRelatedPRs", () => {
@@ -61,7 +70,7 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
     payload.action = "milestoned";
     payload.issue.milestone!.title = "TypeScript 5.8.0";
 
-    mockAPI.graphql.mockResolvedValue(getRelatedPRMock());
+    mockRelatedPR(mockAPI);
 
     await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
 
@@ -86,7 +95,7 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
     payload.action = "milestoned";
     payload.issue.milestone!.title = "Backlog";
 
-    mockAPI.graphql.mockResolvedValue(getRelatedPRMock());
+    mockRelatedPR(mockAPI);
 
     await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
 
@@ -103,7 +112,7 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
     const payload: IssuesEvent = getIssueFixture("milestoned");
     payload.issue.milestone!.title = "TypeScript 5.8.0";
 
-    mockAPI.graphql.mockResolvedValue(getRelatedPRMock(["For Backlog Bug"]));
+    mockRelatedPR(mockAPI, ["For Backlog Bug"]);
 
     await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
 
@@ -127,7 +136,7 @@ describe("addMilestoneLabelsToRelatedPRs", () => {
     payload.action = "milestoned";
     payload.issue.milestone!.title = "Backlog";
 
-    mockAPI.graphql.mockResolvedValue(getRelatedPRMock(["For Backlog Bug"]));
+    mockRelatedPR(mockAPI, ["For Backlog Bug"]);
 
     await addMilestoneLabelsToRelatedPRs(api, payload, getFakeLogger());
 
