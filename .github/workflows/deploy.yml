@@ -7,7 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '22.x'
+  NODE_VERSION: '24.x'
+  AZURE_NODE_VERSION: '~24'
   RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
   FUNCTION_APP_NAME: TypeScriptReposAutomation2
   STORAGE_ACCOUNT_NAME: typescriptreposauto997e
@@ -80,6 +81,9 @@ jobs:
 
       # - name: Set package path
       #   run: az functionapp config appsettings set -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }} --settings WEBSITE_RUN_FROM_PACKAGE="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.STORAGE_CONTAINER_NAME }}/${{ env.FUNCTION_ZIP_NAME }}"
+
+      - name: Configure Node runtime
+        run: az functionapp config appsettings set -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }} --settings WEBSITE_NODE_DEFAULT_VERSION="${{ env.AZURE_NODE_VERSION }}"
 
       - name: Restart app
         run: az functionapp restart -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }}
