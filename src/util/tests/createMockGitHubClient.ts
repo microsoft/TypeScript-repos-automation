@@ -49,7 +49,7 @@ export const createMockGitHubClient = () => {
     },
     teams: {
       getByName: vi.fn(),
-      getMembership: vi.fn(),
+      getMembershipForUserInOrg: vi.fn(),
     },
     search: {
       issuesAndPullRequests: vi.fn(),
@@ -102,7 +102,7 @@ export const createFakeGitHubClient = () => {
     },
     teams: {
       getByName: Promise.resolve({}),
-      getMembership: Promise.resolve({ status: 200 }),
+      getMembershipForUserInOrg: Promise.resolve({ data: { state: "active" } }),
     },
     search: {
       issuesAndPullRequests: Promise.resolve({}),

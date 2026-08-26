@@ -41,6 +41,7 @@ function defaultPermissions(): Permissions {
   return {
     contents: "write",
     issues: "write",
+    members: "read",
     pull_requests: "write",
   };
 }
