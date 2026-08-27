@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest"
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import type { PRInfo } from "../anyRepoHandlePullRequest.js"
+import { addCommentIfMissing } from "../util/addCommentIfMissing.js"
 import { Logger } from "../util/logger.js"
 
 export const generatedDomLibFiles = [
@@ -41,17 +42,15 @@ export const closeGeneratedDomLibPRs = async (
     per_page: 100,
   })
 
-  if (!files.some(file => generatedDomLibFileSet.has(file.filename))) {
+  if (!files.some(file =>
+    generatedDomLibFileSet.has(file.filename)
+    || file.previous_filename !== undefined && generatedDomLibFileSet.has(file.previous_filename)
+  )) {
     logger.trace("Pull request does not modify generated DOM library files")
     return false
   }
 
-  if (!info.comments.some(comment => comment.body?.startsWith(message.slice(0, 25)))) {
-    await api.issues.createComment({
-      ...info.thisIssue,
-      body: message,
-    })
-  }
+  await addCommentIfMissing(api, info, message)
 
   await api.pulls.update({
     owner: repo.owner.login,

@@ -77,6 +77,26 @@ describe(closeGeneratedDomLibPRs, () => {
     expect(mockAPI.pulls.update).not.toHaveBeenCalled()
   })
 
+  it("closes an external PR that renames a generated DOM library file", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.paginate
+      .mockResolvedValueOnce([{
+        filename: "renamed.d.ts",
+        previous_filename: generatedDomLibFiles[0],
+      }])
+      .mockResolvedValueOnce([])
+
+    const closed = await closeGeneratedDomLibPRs(
+      api,
+      getPRFixture("opened"),
+      getFakeLogger(),
+      createPRInfo(),
+    )
+
+    expect(closed).toBe(true)
+    expect(mockAPI.pulls.update).toHaveBeenCalled()
+  })
+
   it("does not repeat the explanation comment", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     mockAPI.paginate.mockResolvedValue([{ filename: generatedDomLibFiles[0] }])
@@ -90,6 +110,25 @@ describe(closeGeneratedDomLibPRs, () => {
           body: "It looks like you've sent a pull request that updates generated declaration files related to the DOM.",
         }] as any,
       }),
+    )
+
+    expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
+    expect(mockAPI.pulls.update).toHaveBeenCalled()
+  })
+
+  it("rechecks comments before adding the explanation", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.paginate
+      .mockResolvedValueOnce([{ filename: generatedDomLibFiles[0] }])
+      .mockResolvedValueOnce([{
+        body: "It looks like you've sent a pull request that updates generated declaration files related to the DOM.",
+      }])
+
+    await closeGeneratedDomLibPRs(
+      api,
+      getPRFixture("opened"),
+      getFakeLogger(),
+      createPRInfo(),
     )
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
