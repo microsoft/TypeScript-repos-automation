@@ -108,6 +108,7 @@ describe(closeGeneratedDomLibPRs, () => {
       createPRInfo({
         comments: [{
           body: "It looks like you've sent a pull request that updates generated declaration files related to the DOM.",
+          user: { login: "typescript-automation[bot]" },
         }] as any,
       }),
     )
@@ -122,6 +123,7 @@ describe(closeGeneratedDomLibPRs, () => {
       .mockResolvedValueOnce([{ filename: generatedDomLibFiles[0] }])
       .mockResolvedValueOnce([{
         body: "It looks like you've sent a pull request that updates generated declaration files related to the DOM.",
+        user: { login: "typescript-automation[bot]" },
       }])
 
     await closeGeneratedDomLibPRs(
@@ -132,6 +134,28 @@ describe(closeGeneratedDomLibPRs, () => {
     )
 
     expect(mockAPI.issues.createComment).not.toHaveBeenCalled()
+    expect(mockAPI.pulls.update).toHaveBeenCalled()
+  })
+
+  it("does not accept a matching comment from the PR author", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    mockAPI.paginate
+      .mockResolvedValueOnce([{ filename: generatedDomLibFiles[0] }])
+      .mockResolvedValueOnce([])
+
+    await closeGeneratedDomLibPRs(
+      api,
+      getPRFixture("opened"),
+      getFakeLogger(),
+      createPRInfo({
+        comments: [{
+          body: "It looks like you've sent a pull request that updates generated declaration files related to the DOM.",
+          user: { login: "external-contributor" },
+        }] as any,
+      }),
+    )
+
+    expect(mockAPI.issues.createComment).toHaveBeenCalled()
     expect(mockAPI.pulls.update).toHaveBeenCalled()
   })
 })

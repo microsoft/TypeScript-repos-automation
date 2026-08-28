@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest"
 import type { PRInfo } from "../anyRepoHandlePullRequest.js"
+import { isTypeScriptBot } from "./botUsers.js"
 
 const pendingCommentChecks = new Map<string, Promise<void>>()
 
@@ -26,14 +27,17 @@ const acquireCommentLock = async (key: string) => {
 }
 
 export const addCommentIfMissing = async (api: Octokit, info: PRInfo, message: string) => {
-  if (info.comments.some(comment => comment.body?.startsWith(message.slice(0, 25)))) {
+  const isMatchingBotComment = (comment: { body?: string | null, user?: { login?: string } | null }) =>
+    isTypeScriptBot(comment.user?.login) && comment.body?.startsWith(message.slice(0, 25))
+
+  if (info.comments.some(isMatchingBotComment)) {
     return
   }
 
   const key = `${info.thisIssue.owner}/${info.thisIssue.repo}#${info.thisIssue.issue_number}`
   using _lock = await acquireCommentLock(key)
   const comments = await api.paginate(api.issues.listComments, info.thisIssue)
-  if (!comments.some(comment => comment.body?.startsWith(message.slice(0, 25)))) {
+  if (!comments.some(isMatchingBotComment)) {
     await api.issues.createComment({
       ...info.thisIssue,
       body: message

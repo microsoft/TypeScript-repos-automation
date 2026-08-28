@@ -67,10 +67,10 @@ describe(addCommentToUncommittedPRs, () => {
 
   it("Adds only one comment when checks for the same PR run concurrently", async () => {
     const { mockAPI, api } = createMockGitHubClient()
-    const comments: { body: string }[] = []
+    const comments: { body: string, user: { login: string } }[] = []
     mockAPI.paginate.mockImplementation(async () => comments)
     mockAPI.issues.createComment.mockImplementation(async ({ body }) => {
-      comments.push({ body })
+      comments.push({ body, user: { login: "typescript-automation[bot]" } })
     })
 
     const pr = getPRFixture("opened")
@@ -117,7 +117,10 @@ describe(addCommentToUncommittedPRs, () => {
     pr.pull_request.labels = [{ name: "For Backlog Bug" } as Partial<Label> as Label]
 
     const info = createPRInfo({ 
-      comments: [{ body: "The TypeScript team hasn't accepted the linked issue #1" }] as any,
+      comments: [{
+        body: "The TypeScript team hasn't accepted the linked issue #1",
+        user: { login: "typescript-automation[bot]" },
+      }] as any,
       relatedIssues: [{ number: 1, labels: [{ name: "Suggestion" }] }] as any
     })
     await addCommentToUncommittedPRs(api, pr, getFakeLogger(), info)
