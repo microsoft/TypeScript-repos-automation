@@ -13,6 +13,7 @@ import { HttpResponseInit, InvocationContext } from "@azure/functions"
 import { Logger } from "./util/logger.js"
 import { isTypeScriptBot } from "./util/botUsers.js"
 import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
+import { closeGeneratedDomLibPRs } from "./checks/closeGeneratedDomLibPRs.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   if (
@@ -29,9 +30,9 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
   const api = await createGitHubClient(payload.repository.owner.login, payload.repository.name)
   const ran = [] as string[]
 
-  const run = (
+  const run = <T>(
     name: string,
-    fn: (api: Octokit, payload: PullRequestEvent, logger: Logger, pr: PRInfo) => Promise<void>,
+    fn: (api: Octokit, payload: PullRequestEvent, logger: Logger, pr: PRInfo) => Promise<T>,
     pr: PRInfo
   ) => {
     context.info(`\n\n## ${name}\n`)
@@ -40,6 +41,14 @@ export const handlePullRequestPayload = async (payload: PullRequestEvent, contex
   }
 
   const pr = await generatePRInfo(api, payload, context)
+
+  if (await run("Closing external PRs that modify generated DOM libraries", closeGeneratedDomLibPRs, pr)) {
+    return {
+      status: 200,
+      headers: { sha },
+      body: `PR success, ran: ${ran.join(", ")}`,
+    }
+  }
 
   await run("Assigning Self to Core Team PRs", assignSelfToNewPullRequest, pr)
   await run("Add a core team label to PRs", addLabelForTeamMember, pr)

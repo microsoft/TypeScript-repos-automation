@@ -38,6 +38,7 @@ export const createMockGitHubClient = () => {
     },
     pulls: {
       get: vi.fn(),
+      update: vi.fn(),
       listFiles: {
         endpoint: {
           merge: vi.fn(),
@@ -95,6 +96,7 @@ export const createFakeGitHubClient = () => {
     },
     pulls: {
       get: Promise.resolve({}),
+      update: Promise.resolve({}),
       listFiles: Promise.resolve({}),
     },
     checks: {
