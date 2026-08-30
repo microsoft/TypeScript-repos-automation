@@ -52,6 +52,7 @@ export const getRelatedPRs = async (
             }
           }
         }
+      }
       `,
       {
         owner,
