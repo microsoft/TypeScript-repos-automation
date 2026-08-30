@@ -7,10 +7,11 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '24.x'
-  AZURE_NODE_VERSION: '~24'
+  NODE_VERSION: '22.x'
+  AZURE_NODE_VERSION: '~22'
   RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
   FUNCTION_APP_NAME: TypeScriptReposAutomation2
+  FUNCTION_APP_HOST_NAME: typescriptreposautomation-d0gkhdf5d7h4fce4.b02.azurefd.net
   STORAGE_ACCOUNT_NAME: typescriptreposauto997e
   STORAGE_CONTAINER_NAME: deployment
   FUNCTION_ZIP_NAME: function.zip
@@ -87,3 +88,16 @@ jobs:
 
       - name: Restart app
         run: az functionapp restart -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FUNCTION_APP_NAME }}
+
+      - name: Verify app startup
+        run: |
+          for attempt in {1..12}; do
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              https://${{ env.FUNCTION_APP_HOST_NAME }}/api/TypeScriptRepoPullRequestWebhook || true)
+            if [[ "$status" == "500" ]]; then
+              exit 0
+            fi
+            echo "Attempt $attempt returned HTTP $status"
+            sleep 10
+          done
+          exit 1
