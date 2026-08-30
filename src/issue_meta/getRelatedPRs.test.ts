@@ -38,6 +38,17 @@ describe(getRelatedPRs, () => {
     ])
     expect(mockAPI.graphql).toHaveBeenCalledTimes(2)
     expect(mockAPI.issues.get).toHaveBeenCalledTimes(2)
+
+    const query: unknown = mockAPI.graphql.mock.calls[0]?.[0]
+    expect(typeof query).toBe("string")
+    if (typeof query !== "string") throw new Error("Expected a GraphQL query")
+    let braceDepth = 0
+    for (const character of query) {
+      if (character === "{") braceDepth++
+      if (character === "}") braceDepth--
+      expect(braceDepth).toBeGreaterThanOrEqual(0)
+    }
+    expect(braceDepth).toBe(0)
   })
 
   it("rejects an incomplete pagination response", async () => {
