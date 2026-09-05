@@ -35,6 +35,7 @@ export const createMockGitHubClient = () => {
       addLabels: vi.fn(),
       removeLabel: vi.fn(),
       get: vi.fn(),
+      listEventsForTimeline: vi.fn(),
     },
     pulls: {
       get: vi.fn(),
@@ -93,6 +94,7 @@ export const createFakeGitHubClient = () => {
       addLabels: Promise.resolve({}),
       removeLabel: Promise.resolve({}),
       get: Promise.resolve({}),
+      listEventsForTimeline: Promise.resolve({}),
     },
     pulls: {
       get: Promise.resolve({}),

@@ -16,8 +16,6 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequ
     return logger.info("Skipping because there are assignees already")
   }
 
-  const author = pull_request.user
-
   const thisIssue = {
     repo: repo.name,
     owner: repo.owner.login,
@@ -26,8 +24,8 @@ export const assignSelfToNewPullRequest = async (api: Octokit, payload: PullRequ
   }
 
   if (info.authorIsMemberOfTSTeam) {
-    logger.info(`Adding ${author.login} as the assignee`)
-    await api.issues.addAssignees({ ...thisIssue, assignees: [author.login] })
+    logger.info(`Adding ${info.effectiveAuthor} as the assignee`)
+    await api.issues.addAssignees({ ...thisIssue, assignees: [info.effectiveAuthor] })
   } else {
     logger.info(`Skipping because they are not a TS team member`)
   }

@@ -4,10 +4,10 @@ import { createMockGitHubClient } from "../util/tests/createMockGitHubClient.js"
 import { getFakeLogger } from "../util/tests/createMockContext.js"
 
 describe(isMemberOfTSTeam, () => {
-  it("considers Copilot a team member without checking team membership", async () => {
+  it("does not consider Copilot itself a team member", async () => {
     const { mockAPI, api } = createMockGitHubClient()
 
-    await expect(isMemberOfTSTeam("Copilot", api, getFakeLogger())).resolves.toBe(true)
+    await expect(isMemberOfTSTeam("Copilot", api, getFakeLogger())).resolves.toBe(false)
     expect(mockAPI.teams.getMembershipForUserInOrg).not.toHaveBeenCalled()
   })
 

@@ -11,7 +11,7 @@ export const addLabelForTeamMember = async (api: Octokit, payload: PullRequestEv
 
   // Check the access level of the user
   if (!info.authorIsMemberOfTSTeam) {
-    return logger.info(`Skipping because ${pull_request.user.login} is not a member of the TS team.`)
+    return logger.info(`Skipping because ${info.effectiveAuthor} is not a member of the TS team.`)
   }
   if (pull_request.state === "closed") {
     return logger.info(`Skipping because the pull request is already closed.`)
