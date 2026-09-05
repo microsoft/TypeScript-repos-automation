@@ -4,6 +4,13 @@ import { createMockGitHubClient } from "../util/tests/createMockGitHubClient.js"
 import { getFakeLogger } from "../util/tests/createMockContext.js"
 
 describe(isMemberOfTSTeam, () => {
+  it("considers Copilot a team member without checking team membership", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+
+    await expect(isMemberOfTSTeam("Copilot", api, getFakeLogger())).resolves.toBe(true)
+    expect(mockAPI.teams.getMembershipForUserInOrg).not.toHaveBeenCalled()
+  })
+
   it("checks for active membership in the microsoft/typescript team", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     mockAPI.teams.getMembershipForUserInOrg.mockResolvedValue({ data: { state: "active" } })

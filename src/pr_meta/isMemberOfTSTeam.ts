@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest"
 import { Logger } from "../util/logger.js"
-import { isTypeScriptBot } from "../util/botUsers.js"
+import { isCopilot, isTypeScriptBot } from "../util/botUsers.js"
 
 function isHttpErrorWithStatus(error: unknown, status: number): boolean {
   return typeof error === "object"
@@ -9,8 +9,9 @@ function isHttpErrorWithStatus(error: unknown, status: number): boolean {
     && error.status === status
 }
 
-/** Checks if someone is a member of a team, and always bails with TS bot */
+/** Checks if someone is a member of the TS team, treating Copilot as a member and TS bots as non-members */
 export const isMemberOfTSTeam = async (username: string, api: Octokit, _log: Logger) => {
+  if (isCopilot(username)) return true
   if (isTypeScriptBot(username)) return false
 
   try {
