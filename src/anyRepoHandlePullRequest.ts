@@ -14,6 +14,7 @@ import { Logger } from "./util/logger.js"
 import { isTypeScriptBot } from "./util/botUsers.js"
 import { isTypeScriptRepo } from "./util/isTypeScriptRepo.js"
 import { closeGeneratedDomLibPRs } from "./checks/closeGeneratedDomLibPRs.js"
+import { getPullRequestAuthor } from "./pr_meta/getPullRequestAuthor.js"
 
 export const handlePullRequestPayload = async (payload: PullRequestEvent, context: InvocationContext): Promise<HttpResponseInit> => {
   if (
@@ -78,11 +79,13 @@ const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: L
   const options = api.issues.listComments.endpoint.merge(thisIssue)
   const comments: RestEndpointMethodTypes["issues"]["listComments"]["response"]["data"] = await api.paginate(options)
 
-  const authorIsMemberOfTSTeam = await isMemberOfTSTeam(payload.pull_request.user.login, api, logger)
+  const effectiveAuthor = await getPullRequestAuthor(api, payload)
+  const authorIsMemberOfTSTeam = await isMemberOfTSTeam(effectiveAuthor, api, logger)
   const relatedIssues = await getRelatedIssues(repo.owner.login, repo.name, pull_request.number, api)
 
   return {
     thisIssue,
+    effectiveAuthor,
     authorIsMemberOfTSTeam,
     authorIsBot: isTypeScriptBot(payload.pull_request.user.login)
       || payload.pull_request.user.login === "csigs"

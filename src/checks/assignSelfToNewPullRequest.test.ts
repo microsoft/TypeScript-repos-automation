@@ -34,11 +34,32 @@ describe(assignSelfToNewPullRequest, () => {
       api,
       getPRFixture("opened"),
       getFakeLogger(),
-      createPRInfo({ authorIsMemberOfTSTeam: true })
+      createPRInfo({ effectiveAuthor: "ahejlsberg", authorIsMemberOfTSTeam: true })
     )
 
     expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
       assignees: ["ahejlsberg"],
+      id: 35454,
+      issue_number: 35454,
+      owner: "microsoft",
+      repo: "TypeScript",
+    })
+  })
+
+  it("assigns a Copilot pull request to the team member who initiated it", async () => {
+    const { mockAPI, api } = createMockGitHubClient()
+    const pr = getPRFixture("opened")
+    pr.pull_request.user.login = "Copilot"
+
+    await assignSelfToNewPullRequest(
+      api,
+      pr,
+      getFakeLogger(),
+      createPRInfo({ effectiveAuthor: "RyanCavanaugh", authorIsMemberOfTSTeam: true })
+    )
+
+    expect(mockAPI.issues.addAssignees).toHaveBeenCalledWith({
+      assignees: ["RyanCavanaugh"],
       id: 35454,
       issue_number: 35454,
       owner: "microsoft",

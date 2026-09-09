@@ -3,6 +3,7 @@ import type { PRInfo } from "../../anyRepoHandlePullRequest.js"
 export const createPRInfo = (info?: Partial<PRInfo>): PRInfo => {
   return {
     comments: [],
+    effectiveAuthor: "octocat",
     authorIsMemberOfTSTeam: false,
     authorIsBot: false,
     relatedIssues: [],
