@@ -18,7 +18,7 @@ describe(getPullRequestAuthor, () => {
     mockAPI.paginate.mockResolvedValue([
       {
         event: "copilot_work_started",
-        created_at: payload.pull_request.created_at,
+        created_at: "2019-12-02T23:26:10Z",
         actor: { login: "RyanCavanaugh" },
         performed_via_github_app: { slug: "copilot-swe-agent" },
       },
@@ -57,7 +57,7 @@ describe(getPullRequestAuthor, () => {
     await expect(getPullRequestAuthor(api, payload)).resolves.toBe("Copilot")
   })
 
-  it("ignores Copilot agent work started after the pull request was created", async () => {
+  it("ignores Copilot agent work started outside the author window", async () => {
     const { mockAPI, api } = createMockGitHubClient()
     const payload = getPRFixture("opened")
     payload.pull_request.user.login = "Copilot"
