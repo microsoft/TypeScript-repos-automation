@@ -4,6 +4,7 @@ import { isCopilot } from "../util/botUsers.js"
 
 type CopilotWorkStartedEvent = {
   event?: string
+  created_at?: string | null
   actor?: {
     login?: string
   } | null
@@ -23,6 +24,9 @@ export const getPullRequestAuthor = async (api: Octokit, payload: PullRequestEve
   })
   return events.find(
     event => event.event === "copilot_work_started"
+      && event.created_at !== undefined
+      && event.created_at !== null
+      && event.created_at <= payload.pull_request.created_at
       && event.performed_via_github_app?.slug === "copilot-swe-agent"
   )?.actor?.login ?? author
 }
