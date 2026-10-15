@@ -29,7 +29,7 @@ export const closeGeneratedDomLibPRs = async (
   logger: Logger,
   info: PRInfo,
 ) => {
-  if (payload.pull_request.state === "closed" || info.authorIsMemberOfTSTeam || info.authorIsBot) {
+  if (payload.pull_request.state === "closed" || info.isTeamPR || info.authorIsBot) {
     logger.trace("Skipping generated DOM library check")
     return false
   }

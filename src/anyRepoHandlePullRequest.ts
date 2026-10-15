@@ -84,6 +84,7 @@ const generatePRInfo = async (api: Octokit, payload: PullRequestEvent, logger: L
   return {
     thisIssue,
     authorIsMemberOfTSTeam,
+    isTeamPR: pull_request.head.repo?.id === pull_request.base.repo.id || authorIsMemberOfTSTeam,
     authorIsBot: isTypeScriptBot(payload.pull_request.user.login)
       || payload.pull_request.user.login === "csigs"
       || payload.pull_request.user.type === "Bot",

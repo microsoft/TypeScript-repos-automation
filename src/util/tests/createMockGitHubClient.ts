@@ -30,7 +30,11 @@ export const createMockGitHubClient = () => {
     issues: {
       addAssignees: vi.fn(),
       createComment: vi.fn(),
-      listComments: vi.fn(),
+      listComments: Object.assign(vi.fn(), {
+        endpoint: {
+          merge: vi.fn(),
+        },
+      }),
       replaceLabels: vi.fn(),
       addLabels: vi.fn(),
       removeLabel: vi.fn(),
