@@ -11,7 +11,7 @@ import { verifyGitHubWebhook } from "../util/verifyWebhook.js";
 const httpTrigger: HttpHandler = async function (request, context) {
   const bodyText = await request.text();
 
-  const webbookVerifyResponse = verifyGitHubWebhook(request, context, bodyText);
+  const webbookVerifyResponse = await verifyGitHubWebhook(request, context, bodyText);
   if (webbookVerifyResponse) {
     return webbookVerifyResponse;
   }
