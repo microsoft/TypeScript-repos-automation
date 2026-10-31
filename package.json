@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@azure/functions": "^4.16.2",
-    "@azure/identity": "^4.13.2",
+    "@azure/identity": "^4.14.1",
     "@azure/keyvault-keys": "^4.10.2",
     "@octokit/rest": "^22.0.1",
     "@octokit/webhooks-methods": "^6.0.0"
