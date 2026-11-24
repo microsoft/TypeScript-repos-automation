@@ -1,0 +1,90 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+pr: none
+
+variables:
+  RESOURCE_GROUP_NAME: TypeScriptReposAutomation2
+  FUNCTION_APP_NAME: TypeScriptReposAutomation2
+  STORAGE_ACCOUNT_NAME: typescriptreposauto997e
+  STORAGE_CONTAINER_NAME: deployment
+  FUNCTION_ZIP_NAME: function.zip
+
+jobs:
+  - job: Build
+    pool:
+      vmImage: windows-latest
+    steps:
+      - checkout: self
+
+      - task: UseNode@1
+        displayName: Use Node 22.x
+        inputs:
+          version: 22.x
+
+      - bash: |
+          set -euo pipefail
+          npm ci
+          npm run build
+          npm test
+        displayName: Install, build and test
+
+      - bash: npm run bundle
+        displayName: Bundle
+
+      - bash: node dist/functions/index.js
+        displayName: Smoke test
+
+      - task: CopyFiles@2
+        displayName: Stage function app
+        inputs:
+          Contents: |
+            host.json
+            package.json
+            dist/functions/index.js
+          TargetFolder: $(Build.ArtifactStagingDirectory)/app
+
+      - task: ArchiveFiles@2
+        displayName: Create zip
+        inputs:
+          rootFolderOrFile: $(Build.ArtifactStagingDirectory)/app
+          includeRootFolder: false
+          archiveType: zip
+          archiveFile: $(Build.ArtifactStagingDirectory)/$(FUNCTION_ZIP_NAME)
+
+      - publish: $(Build.ArtifactStagingDirectory)/$(FUNCTION_ZIP_NAME)
+        displayName: Publish function zip
+        artifact: function
+
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - job: Deploy
+        dependsOn: Build
+        pool:
+          name: TypeScript-1ES-Deploys
+          demands:
+            - ImageOverride -equals azure-linux-3
+        steps:
+          - checkout: none
+
+          - download: current
+            displayName: Download function zip
+            artifact: function
+
+          - task: AzureCLI@2
+            displayName: Upload package and restart app
+            inputs:
+              azureSubscription: typescript-function-deploys
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az storage blob upload \
+                  -f "$(Pipeline.Workspace)/function/$(FUNCTION_ZIP_NAME)" \
+                  --account-name "$(STORAGE_ACCOUNT_NAME)" \
+                  -c "$(STORAGE_CONTAINER_NAME)" \
+                  -n "$(FUNCTION_ZIP_NAME)" \
+                  --overwrite true \
+                  --auth-mode login
+                az functionapp restart -g "$(RESOURCE_GROUP_NAME)" -n "$(FUNCTION_APP_NAME)"
